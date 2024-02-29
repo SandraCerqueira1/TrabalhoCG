@@ -19,80 +19,12 @@ float cameraTheta = M_PI / 4;  // Ângulo inicial
 float cameraPhi = M_PI / 4;    // Ângulo inicial
 GLenum drawMode = GL_LINE;
 
-struct Vertex {
+struct Point3D {
     float x, y, z;
+    Point3D(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 };
 
-class Ponto {
-    float x;
-    float y;
-    float z;
-
-public:
-
-    Ponto() {
-        x = 0;
-        y = 0;
-        z = 0;
-    }
-
-    Ponto(float a, float b, float c) {
-        x = a;
-        y = b;
-        z = c;
-    }
-
-    float getX() const {
-        return x;
-    }
-
-    float getY() const {
-        return y;
-    }
-
-    float getZ() const {
-        return z;
-    }
-
-    void setX(float a) {
-        x = a;
-    }
-
-    void setY(float b) {
-        y = b;
-    }
-
-    void setZ(float c) {
-        z = c;
-    }
-};
-
-list<Ponto> pontosLista;
-
-void readFile(string caminho3d) {
-    string linha;
-    vector<string> coordenadas;
-
-    // Abrir o arquivo
-    ifstream file(caminho3d);
-    if (file.is_open()) {
-        // Pegar na primeira linha que é o número de vértices, ou seja, número de linhas a ler (1 vértice por linha)
-        getline(file, linha);
-        int nLinhas = atoi(linha.c_str());
-        for (int i = 1; i <= nLinhas; i++) {
-            getline(file, linha);     // Pegar na linha atual
-            stringstream ss(linha);
-            vector<string> result{
-                istream_iterator<string>(ss), {}    // Separar a linha nos espaços e guardar como array de strings em result
-            };
-
-            pontosLista.push_back(Ponto(stof(result[0]), stof(result[1]), stof(result[2]))); // Adicionar o Ponto lido à lista de pontos
-        }
-    }
-    else {
-        cout << "Erro ao ler o arquivo .3d" << endl;
-    }
-}
+std::vector<Point3D> globalPoints;
 
 void changeSize(int w, int h) {
     // Evitar uma divisão por zero, quando a janela é muito curta
@@ -117,20 +49,37 @@ void changeSize(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void drawFiguras() {
-    glPointSize(5.0); // Ajustar o tamanho do ponto conforme necessário
+void readPointsFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        float x1, y1, z1, x2, y2, z2, x3, y3, z3;
+        char delimiter;
+        iss >> x1 >> delimiter >> y1 >> delimiter >> z1 >> delimiter
+            >> x2 >> delimiter >> y2 >> delimiter >> z2 >> delimiter
+            >> x3 >> delimiter >> y3 >> delimiter >> z3;
+        globalPoints.emplace_back(x1, y1, z1);
+        globalPoints.emplace_back(x2, y2, z2);
+        globalPoints.emplace_back(x3, y3, z3);
+    }
+}
 
-    // Desenhar os pontos lidos do arquivo
-    glBegin(GL_POINTS);
-    glColor3f(1.0f, 1.0f, 1.0f); // Cor dos pontos (branco)
-    for (const Ponto& ponto : pontosLista) {
-        glVertex3f(ponto.getX(), ponto.getY(), ponto.getZ());
+void drawTriangles() {
+    glBegin(GL_TRIANGLES);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for (size_t i = 0; i < globalPoints.size(); i += 3) {
+        glVertex3f(globalPoints[i].x, globalPoints[i].y, globalPoints[i].z);
+        glVertex3f(globalPoints[i + 1].x, globalPoints[i + 1].y, globalPoints[i + 1].z);
+        glVertex3f(globalPoints[i + 2].x, globalPoints[i + 2].y, globalPoints[i + 2].z);
     }
     glEnd();
 }
 
+
 void renderScene(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glLoadIdentity();
 
     float camX = cameraRadius * sin(cameraTheta) * sin(cameraPhi);
@@ -155,7 +104,7 @@ void renderScene(void) {
     glVertex3f(0.0f, 0.0f, 100.0f);
     glEnd();
 
-    drawFiguras(); // Desenhar os pontos lidos
+    drawTriangles();
 
     glutSwapBuffers();
 }
@@ -201,10 +150,11 @@ int main(int argc, char** argv) {
     glutInitWindowSize(800, 800);
     glutCreateWindow("CG@DI-UM");
 
-    // Adicionar esta linha para ler o arquivo plano.3d
-   //readFile("C:\\Users\\sandr\\Downloads\\Fase1\\Fase1\\Ficheiros3D\\plane.3d");
-    //readFile("C:\\Users\\sandr\\Downloads\\Fase1\\Fase1\\Ficheiros3D\\cone.3d");
-    readFile("C:\\Users\\sandr\\Downloads\\Fase1\\Fase1\\Ficheiros3D\\esfera.3d");
+    //readPointsFromFile("C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\plane.3d");
+    //readPointsFromFile("C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\cone.3d");
+    //readPointsFromFile("C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\sphere.3d");
+    readPointsFromFile("C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\box.3d");
+
 
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
