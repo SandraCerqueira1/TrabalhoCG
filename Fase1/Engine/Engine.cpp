@@ -143,6 +143,13 @@ void processKeys(unsigned char c, int xx, int yy) {
     glutPostRedisplay();
 }
 
+#define PLANE "C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\plane.3d"
+#define PLANEXY "C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\planeXY.3d"
+#define PLANEYZ "C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\planeYZ.3d"
+#define CONE "C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\cone.3d"
+#define SPHERE "C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\sphere.3d"
+#define BOX "C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\box.3d"
+
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -150,10 +157,12 @@ int main(int argc, char** argv) {
     glutInitWindowSize(800, 800);
     glutCreateWindow("CG@DI-UM");
 
-    //readPointsFromFile("C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\plane.3d");
-    //readPointsFromFile("C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\cone.3d");
-    //readPointsFromFile("C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\sphere.3d");
-    readPointsFromFile("C:\\Users\\João Rodrigues\\Desktop\\Universidade\\3 Ano 2 Semestre\\CG\\TrabalhoCG-main\\Fase1\\Ficheiros3D\\box.3d");
+    //readPointsFromFile(PLANE);
+    //readPointsFromFile(PLANEXY);
+    //readPointsFromFile(PLANEYZ);
+    //readPointsFromFile(CONE);
+    readPointsFromFile(SPHERE);
+    //readPointsFromFile(BOX);
 
 
     glutDisplayFunc(renderScene);
