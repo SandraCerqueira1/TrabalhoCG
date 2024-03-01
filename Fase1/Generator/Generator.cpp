@@ -19,99 +19,187 @@ void writeVertex(std::ofstream& outFile, float x1, float y1, float z1,
 }
 
 
-void generatePlaneXZ(float length, int divisions, const std::string& filename, float tx, float ty, float tz) {
-    std::ofstream outFile("../Ficheiros3D/" + filename);
-    if (!outFile.is_open()) {
-        std::cerr << "Erro ao abrir o arquivo " << filename << std::endl;
-        return;
-    }
-
+void generatePlaneXZ(float length, int divisions, std::ofstream& outFile, float tx, float ty, float tz, int side) {
+    // Calcula o espaçamento entre os vértices
     float spacing = length / divisions;
 
-    for (int i = 0; i < divisions; ++i) {
-        for (int j = 0; j < divisions; ++j) {
-            float x0 = -length / 2.0f + j * spacing + tx;
-            float z0 = -length / 2.0f + i * spacing + tz;
-            float x1 = -length / 2.0f + (j + 1) * spacing + tx;
-            float z1 = -length / 2.0f + (i + 1) * spacing + tz;
-            float x2 = -length / 2.0f + (j + 1) * spacing + tx;
-            float z2 = -length / 2.0f + i * spacing + tz;
-            outFile << x0 << ", " << ty << ", " << z0 << "; " << x1 << ", " << ty << ", " << z1 << "; " << x2 << ", " << ty << ", " << z2 << std::endl;
+    if (side == 1) {
+        for (int i = 0; i < divisions; ++i) {
+            for (int j = 0; j < divisions; ++j) {
+                // Vértices do primeiro triângulo
+                float x0 = -length / 2.0f + j * spacing + tx;
+                float y0 = 0 + ty;
+                float z0 = -length / 2.0f + i * spacing + tz;
+                float x1 = -length / 2.0f + (j + 1) * spacing + tx;
+                float y1 = 0 + ty;
+                float z1 = -length / 2.0f + (i + 1) * spacing + tz;
+                float x2 = -length / 2.0f + (j + 1) * spacing + tx;
+                float y2 = 0 + ty;
+                float z2 = -length / 2.0f + i * spacing + tz;
+                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << x2 << ", " << y2 << ", " << z2 << std::endl;
 
-            float x3 = -length / 2.0f + j * spacing + tx;
-            float z3 = -length / 2.0f + i * spacing + tz;
-            float x4 = -length / 2.0f + j * spacing + tx;
-            float z4 = -length / 2.0f + (i + 1) * spacing + tz;
-            float x5 = -length / 2.0f + (j + 1) * spacing + tx;
-            float z5 = -length / 2.0f + (i + 1) * spacing + tz;
-            outFile << x3 << ", " << ty << ", " << z3 << "; " << x4 << ", " << ty << ", " << z4 << "; " << x5 << ", " << ty << ", " << z5 << std::endl;
+                // Vértices do segundo triângulo
+                float x3 = -length / 2.0f + j * spacing + tx;
+                float y3 = 0 + ty;
+                float z3 = -length / 2.0f + i * spacing + tz;
+                float x4 = -length / 2.0f + j * spacing + tx;
+                float y4 = 0 + ty;
+                float z4 = -length / 2.0f + (i + 1) * spacing + tz;
+                float x5 = -length / 2.0f + (j + 1) * spacing + tx;
+                float y5 = 0 + ty;
+                float z5 = -length / 2.0f + (i + 1) * spacing + tz;
+                outFile << x3 << ", " << y3 << ", " << z3 << "; " << x4 << ", " << y4 << ", " << z4 << "; " << x5 << ", " << y5 << ", " << z5 << std::endl;
+            }
         }
     }
+    else {
+        for (int i = 0; i < divisions; ++i) {
+            for (int j = 0; j < divisions; ++j) {
+                // Vértices do primeiro triângulo
+                float z0 = -length / 2.0f + j * spacing + tz;
+                float y0 = 0 + ty;
+                float x0 = -length / 2.0f + i * spacing + tx;
+                float z1 = -length / 2.0f + (j + 1) * spacing + tz;
+                float y1 = 0 + ty;
+                float x1 = -length / 2.0f + (i + 1) * spacing + tx;
+                float z2 = -length / 2.0f + (j + 1) * spacing + tz;
+                float y2 = 0 + ty;
+                float x2 = -length / 2.0f + i * spacing + tx;
+                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << x2 << ", " << y2 << ", " << z2 << std::endl;
 
-    outFile.close();
+                // Vértices do segundo triângulo
+                float z3 = -length / 2.0f + j * spacing + tz;
+                float y3 = 0 + ty;
+                float x3 = -length / 2.0f + i * spacing + tx;
+                float z4 = -length / 2.0f + j * spacing + tz;
+                float y4 = 0 + ty;
+                float x4 = -length / 2.0f + (i + 1) * spacing + tx;
+                float z5 = -length / 2.0f + (j + 1) * spacing + tz;
+                float y5 = 0 + ty;
+                float x5 = -length / 2.0f + (i + 1) * spacing + tx;
+                outFile << x3 << ", " << y3 << ", " << z3 << "; " << x4 << ", " << y4 << ", " << z4 << "; " << x5 << ", " << y5 << ", " << z5 << std::endl;
+            }
+        }
+    }
 }
 
-void generatePlaneXY(float length, int divisions, const std::string& filename, float tx, float ty, float tz) {
-    std::ofstream outFile("../Ficheiros3D/" + filename);
-    if (!outFile.is_open()) {
-        std::cerr << "Erro ao abrir o arquivo " << filename << std::endl;
-        return;
-    }
+void generatePlaneXY(float length, int divisions, std::ofstream& outFile, float tx, float ty, float tz, int side) {
+    // Calcula o número total de triângulos
+    int numTriangles = 2 * divisions * divisions;
 
+    // Calcula o espaçamento entre os vértices
+    float spacing = length / divisions;
+
+    if (side == 0) {
+        for (int i = 0; i < divisions; ++i) {
+            for (int j = 0; j < divisions; ++j) {
+                // Vértices do primeiro triângulo
+                float x0 = -length / 2.0f + j * spacing + tx;
+                float y0 = -length / 2.0f + i * spacing + ty;
+                float z0 = 0 + tz;
+                float x1 = -length / 2.0f + (j + 1) * spacing + tx;
+                float y1 = -length / 2.0f + i * spacing + ty;
+                float z1 = 0 + tz;
+                float x2 = -length / 2.0f + (j + 1) * spacing + tx;
+                float y2 = -length / 2.0f + (i + 1) * spacing + ty;
+                float z2 = 0 + tz;
+                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x2 << ", " << y2 << ", " << z2 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << std::endl;
+
+                // Vértices do segundo triângulo
+                float x3 = -length / 2.0f + j * spacing + tx;
+                float y3 = -length / 2.0f + i * spacing + ty;
+                float z3 = 0 + tz;
+                float x4 = -length / 2.0f + (j + 1) * spacing + tx;
+                float y4 = -length / 2.0f + (i + 1) * spacing + ty;
+                float z4 = 0 + tz;
+                float x5 = -length / 2.0f + j * spacing + tx;
+                float y5 = -length / 2.0f + (i + 1) * spacing + ty;
+                float z5 = 0 + tz;
+                outFile << x3 << ", " << y3 << ", " << z3 << "; " << x5 << ", " << y5 << ", " << z5 << "; " << x4 << ", " << y4 << ", " << z4 << "; " << std::endl;
+            }
+        }
+    }
+    else {
+        for (int i = 0; i < divisions; ++i) {
+            for (int j = 0; j < divisions; ++j) {
+                // Vértices do primeiro triângulo
+                float y0 = -length / 2.0f + j * spacing + ty;
+                float x0 = -length / 2.0f + i * spacing + tx;
+                float z0 = 0 + tz;
+                float y1 = -length / 2.0f + (j + 1) * spacing + ty;
+                float x1 = -length / 2.0f + i * spacing + tx;
+                float z1 = 0 + tz;
+                float y2 = -length / 2.0f + (j + 1) * spacing + ty;
+                float x2 = -length / 2.0f + (i + 1) * spacing + tx;
+                float z2 = 0 + tz;
+                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x2 << ", " << y2 << ", " << z2 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << std::endl;
+
+                // Vértices do segundo triângulo
+                float y3 = -length / 2.0f + j * spacing + ty;
+                float x3 = -length / 2.0f + i * spacing + tx;
+                float z3 = 0 + tz;
+                float y4 = -length / 2.0f + (j + 1) * spacing + ty;
+                float x4 = -length / 2.0f + (i + 1) * spacing + tx;
+                float z4 = 0 + tz;
+                float y5 = -length / 2.0f + j * spacing + ty;
+                float x5 = -length / 2.0f + (i + 1) * spacing + tx;
+                float z5 = 0 + tz;
+                outFile << x3 << ", " << y3 << ", " << z3 << "; " << x5 << ", " << y5 << ", " << z5 << "; " << x4 << ", " << y4 << ", " << z4 << "; " << std::endl;
+            }
+        }
+    }
+}
+
+
+
+void generatePlaneYZ(float length, int divisions, std::ofstream& outFile, float tx, float ty, float tz, int side) {
     int numVertices = (divisions + 1) * (divisions + 1);
     float spacing = length / divisions;
 
-    outFile << numVertices << std::endl;
-
-    for (int i = 0; i <= divisions; ++i) {
-        for (int j = 0; j <= divisions; ++j) {
-            float x = -length / 2.0f + j * spacing + tx;
-            float y = -length / 2.0f + i * spacing + ty;
-            outFile << x << ", " << y << ", " << tz << "; ";
+    if (side == 1){
+        for (int i = 0; i < divisions; ++i) {
+            for (int j = 0; j < divisions; ++j) {
+                float x0 = 0 + tx;
+                float y0 = j * spacing + ty;
+                float z0 = -length / 2.0f + i * spacing + tz;
+                float x1 = 0 + tx;
+                float y1 = (j + 1) * spacing + ty;
+                float z1 = -length / 2.0f + (i + 1) * spacing + tz;
+                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x0 << ", " << y1 << ", " << z0 << "; " << x1 << ", " << y1 << ", " << z1 << std::endl;
+                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x0 << ", " << y1 << ", " << z1 << "; " << x1 << ", " << y0 << ", " << z1 << std::endl;
+            }
         }
     }
-
-    outFile.close();
-}
-
-
-void generatePlaneYZ(float length, int divisions, const std::string& filename, float tx, float ty, float tz) {
-    std::ofstream outFile("../Ficheiros3D/" + filename);
-    if (!outFile.is_open()) {
-        std::cerr << "Erro ao abrir o arquivo " << filename << std::endl;
-        return;
-    }
-
-    int numVertices = (divisions + 1) * (divisions + 1);
-    float spacing = length / divisions;
-
-    outFile << numVertices * 2 << std::endl;
-
-    for (int i = 0; i < divisions; ++i) {
-        for (int j = 0; j < divisions; ++j) {
-            float y0 = j * spacing + ty;
-            float z0 = -length / 2.0f + i * spacing + tz;
-            float y1 = (j + 1) * spacing + ty;
-            float z1 = -length / 2.0f + (i + 1) * spacing + tz;
-            outFile << tx << ", " << y0 << ", " << z0 << "; " << tx << ", " << y1 << ", " << z0 << "; " << tx << ", " << y1 << ", " << z1 << std::endl;
-            outFile << tx << ", " << y0 << ", " << z0 << "; " << tx << ", " << y1 << ", " << z1 << "; " << tx << ", " << y0 << ", " << z1 << std::endl;
+    else {
+        for (int i = 0; i < divisions; ++i) {
+            for (int j = 0; j < divisions; ++j) {
+                float x0 = 0 + tx;
+                float y0 = j * spacing + ty;
+                float z0 = -length / 2.0f + i * spacing + tz;
+                float x1 = 0 + tx;
+                float y1 = (j + 1) * spacing + ty;
+                float z1 = -length / 2.0f + (i + 1) * spacing + tz;
+                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << x0 << ", " << y1 << ", " << z0 << std::endl;
+                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x1 << ", " << y0 << ", " << z1 << "; " << x1 << ", " << y1 << ", " << z1 << std::endl;
+            }
         }
     }
-
-    outFile.close();
 }
 
-void generateBox(float length, int divisions, const std::string& filename) {
+void generateBox(float length, int divisions, std::ofstream& outFile) {
     float tx = 0.0f;
     float ty = 0.0f;
     float tz = 0.0f;
 
-    generatePlaneXY(length, divisions, filename, tx, ty, tz + length / 2.0f); // Front face
-    generatePlaneXY(length, divisions, filename, tx, ty, tz - length / 2.0f); // Back face
-    generatePlaneXZ(length, divisions, filename, tx, ty + length / 2.0f, tz); // Top face
-    generatePlaneXZ(length, divisions, filename, tx, ty - length / 2.0f, tz); // Bottom face
-    generatePlaneYZ(length, divisions, filename, tx + length / 2.0f, ty, tz); // Right face
-    generatePlaneYZ(length, divisions, filename, tx - length / 2.0f, ty, tz); // Left face
+    // generatePlaneXY(length, divisions, filename, tx, ty, tz + length / 2.0f); // Front face
+    float tz_adjusted = tz - length / 2.0f;
+    std::cout << "Valor de tz ajustado: " << tz_adjusted << std::endl;
+    generatePlaneXY(length, divisions, outFile, tx, ty + length / 2.0f, tz - length / 2.0f, 0); // Back face
+    generatePlaneXY(length, divisions, outFile, tx, ty + length / 2.0f, tz + length / 2.0f, 1); // Front face
+    generatePlaneXZ(length, divisions, outFile, tx, ty, tz, 0); // Bottom face
+    generatePlaneXZ(length, divisions, outFile, tx, ty + length, tz, 1); // Top face
+    generatePlaneYZ(length, divisions, outFile, tx + length / 2.0f, ty, tz, 1); // Right face
+    generatePlaneYZ(length, divisions, outFile, tx - length / 2.0f, ty, tz, 0); // Left face
 }
 
 
@@ -179,60 +267,52 @@ void drawCone(float radius, float height, float slices, float stacks, const std:
 
 
 void generateSphere(float radius, int slices, int stacks, const std::string& filename) {
-    std::vector<float> vertices;
+    std::ofstream outFile("../Ficheiros3D/" + filename);
+    if (!outFile.is_open()) {
+        std::cerr << "Error opening output file." << std::endl;
+        return;
+    }
+
+    int totalVertices = slices * stacks; // number of triangles
+
+    // Write the total number of vertices in the first line
+    outFile << totalVertices << std::endl;
+
+    float deltaPhi = M_PI / stacks;
+    float deltaTheta = 2 * M_PI / slices;
 
     for (int i = 0; i < stacks; ++i) {
-        float phi1 = static_cast<float>(M_PI) * i / stacks;
-        float phi2 = static_cast<float>(M_PI) * (i + 1) / stacks;
-        
-        for (int j = 0; j <= slices; ++j) {
-            float theta1 = 2 * static_cast<float>(M_PI) * j / slices;
-            float theta2 = 2 * static_cast<float>(M_PI) * (j + 1) / slices;
-            
-            float x1 = radius * std::sin(phi1) * std::cos(theta1);
-            float y1 = radius * std::sin(phi1) * std::sin(theta1);
-            float z1 = radius * std::cos(phi1);
-            
-            float x2 = radius * std::sin(phi1) * std::cos(theta2);
-            float y2 = radius * std::sin(phi1) * std::sin(theta2);
-            float z2 = radius * std::cos(phi1);
-            
-            float x3 = radius * std::sin(phi2) * std::cos(theta2);
-            float y3 = radius * std::sin(phi2) * std::sin(theta2);
-            float z3 = radius * std::cos(phi2);
-            
-            vertices.push_back(x1);
-            vertices.push_back(y1);
-            vertices.push_back(z1);
-            
-            vertices.push_back(x2);
-            vertices.push_back(y2);
-            vertices.push_back(z2);
-            
-            vertices.push_back(x3);
-            vertices.push_back(y3);
-            vertices.push_back(z3);
+        float phi1 = i * deltaPhi;
+        float phi2 = (i + 1) * deltaPhi;
+
+        for (int j = 0; j < slices; ++j) {
+            float theta1 = j * deltaTheta;
+            float theta2 = (j + 1) * deltaTheta;
+
+            // Vertices of the triangles
+            float x1 = radius * sin(phi1) * cos(theta1);
+            float y1 = radius * sin(phi1) * sin(theta1);
+            float z1 = radius * cos(phi1);
+
+            float x2 = radius * sin(phi1) * cos(theta2);
+            float y2 = radius * sin(phi1) * sin(theta2);
+            float z2 = radius * cos(phi1);
+
+            float x3 = radius * sin(phi2) * cos(theta1);
+            float y3 = radius * sin(phi2) * sin(theta1);
+            float z3 = radius * cos(phi2);
+
+            float x4 = radius * sin(phi2) * cos(theta2);
+            float y4 = radius * sin(phi2) * sin(theta2);
+            float z4 = radius * cos(phi2);
+
+            // Writing the triangles formed by the vertices
+            writeVertex(outFile, x1, y1, z1, x2, y2, z2, x3, y3, z3);
+            writeVertex(outFile, x2, y2, z2, x4, y4, z4, x3, y3, z3);
         }
     }
 
-    std::ofstream outFile(filename);
-    if (outFile.is_open()) {
-        // Write the number of vertices as the first line
-        outFile << vertices.size() / 3 << "\n";
-
-        // Write vertex coordinates
-        for (size_t i = 0; i < vertices.size(); i += 9) {
-            for (size_t j = 0; j < 9; j += 3) {
-                outFile << vertices[i + j] << ", " << vertices[i + j + 1] << ", " << vertices[i + j + 2];
-                if (j < 6) outFile << "; ";
-            }
-            outFile << "\n";
-        }
-        outFile.close();
-    }
-    else {
-        std::cerr << "Unable to open file: " << filename << std::endl;
-    }
+    outFile.close();
 }
 
 
@@ -247,6 +327,7 @@ int main(int argc, char* argv[]) {
 
     std::string figura = argv[1];
     std::string filename = argv[argc - 1];
+    std::ofstream outFile("../Ficheiros3D/" + filename);
 
     try {
         if (figura == "plane") {
@@ -255,7 +336,25 @@ int main(int argc, char* argv[]) {
             }
             float length = std::stof(argv[2]);
             int divisions = std::stoi(argv[3]);
-            generatePlaneXZ(length, divisions, filename, 0, 0, 0);
+            generatePlaneXZ(length, divisions, outFile, 0, 0, 0, 0);
+            std::cout << "Plano gerado com sucesso e salvo em " << filename << std::endl;
+        }
+        else if (figura == "planeXY") {
+            if (argc != 5) {
+                throw std::invalid_argument("Número incorreto de argumentos para gerar um plano.");
+            }
+            float length = std::stof(argv[2]);
+            int divisions = std::stoi(argv[3]);
+            generatePlaneXY(length, divisions, outFile, 0, 0 , 0, 0);
+            std::cout << "Plano gerado com sucesso e salvo em " << filename << std::endl;
+        }
+        else if (figura == "planeYZ") {
+            if (argc != 5) {
+                throw std::invalid_argument("Número incorreto de argumentos para gerar um plano.");
+            }
+            float length = std::stof(argv[2]);
+            int divisions = std::stoi(argv[3]);
+            generatePlaneYZ(length, divisions, outFile, 0, 0, 0, 0);
             std::cout << "Plano gerado com sucesso e salvo em " << filename << std::endl;
         }
         else if (figura == "cone") {
@@ -278,13 +377,13 @@ int main(int argc, char* argv[]) {
             generateSphere(radius, slices, stacks, filename);
             std::cout << "Esfera gerada com sucesso e salvo em " << filename << std::endl;
         }
-        else if (figura == "box") { // Adicionado caso para gerar o cubo
+        else if (figura == "box") {
             if (argc != 5) {
                 throw std::invalid_argument("Número incorreto de argumentos para gerar um cubo.");
             }
             float length = std::stof(argv[2]);
             int divisions = std::stoi(argv[3]);
-            generateBox(length, divisions, filename);
+            generateBox(length, divisions, outFile);
             std::cout << "Cubo gerado com sucesso e salvo em " << filename << std::endl;
         }
         else {
