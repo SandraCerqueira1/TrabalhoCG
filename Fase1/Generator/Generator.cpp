@@ -286,8 +286,9 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
         float phi2 = (i + 1) * deltaPhi;
 
         for (int j = 0; j < slices; ++j) {
-            float theta1 = j * deltaTheta;
-            float theta2 = (j + 1) * deltaTheta;
+            float deltaThetaAdjusted = deltaTheta / 2.0f;
+            float theta1 = (j * deltaTheta) - deltaThetaAdjusted;
+            float theta2 = ((j + 1) * deltaTheta) - deltaThetaAdjusted;
 
             // Vértices dos triângulos
             float x1 = radius * sin(phi1) * cos(theta1);
@@ -314,7 +315,6 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
 
     outFile.close();
 }
-
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
