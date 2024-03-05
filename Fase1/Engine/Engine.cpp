@@ -31,12 +31,12 @@ double lookZ;
 double upX;
 double upY;
 double upZ;
-int fov;
-int near;
-double far;
+float fov;
+float near;
+float far;
 
-int windowWidth ;
-int windowHeight ;
+int windowWidth;
+int windowHeight;
 
 bool eixos = true;   // eixos
 int tipo = GL_LINE;   // tipo de desenho: linhas, pontos ou fill
@@ -57,9 +57,13 @@ void changeSize(int w, int h) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, w, h);
-    gluPerspective(40.0f, ratio, 1.0f, 1000.0f);
+
+    std::cout << "far value antes: " << far << std::endl;
+    gluPerspective(fov, ratio, near, far);
+    std::cout << "far value : " << far << std::endl;
     glMatrixMode(GL_MODELVIEW);
 }
+
 void readPointsFromFile(const std::string& filename) {
     std::ifstream file(filename);
     std::string line;
@@ -302,7 +306,7 @@ int main(int argc, char* argv[]) {
         readXML(argv[1]);
     }
     else {
-        readXML("test_1_2.xml");
+        readXML("test_1_3.xml");
     }
 
     // Inicialização
@@ -318,9 +322,9 @@ int main(int argc, char* argv[]) {
     glutReshapeFunc(changeSize);
 
     // Mouse callbacks
-    //glutMouseFunc(processMouseButtons);
-    //glutMotionFunc(processMouseMotion);
-    //glutKeyboardFunc(keyboard);
+    glutMouseFunc(processMouseButtons);
+    glutMotionFunc(processMouseMotion);
+    glutKeyboardFunc(keyboard);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
