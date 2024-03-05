@@ -194,12 +194,12 @@ void generateBox(float length, int divisions, std::ofstream& outFile) {
     // generatePlaneXY(length, divisions, filename, tx, ty, tz + length / 2.0f); // Front face
     float tz_adjusted = tz - length / 2.0f;
     std::cout << "Valor de tz ajustado: " << tz_adjusted << std::endl;
-    generatePlaneXY(length, divisions, outFile, tx, ty + length / 2.0f, tz - length / 2.0f, 0); // Back face
-    generatePlaneXY(length, divisions, outFile, tx, ty + length / 2.0f, tz + length / 2.0f, 1); // Front face
-    generatePlaneXZ(length, divisions, outFile, tx, ty, tz, 0); // Bottom face
-    generatePlaneXZ(length, divisions, outFile, tx, ty + length, tz, 1); // Top face
-    generatePlaneYZ(length, divisions, outFile, tx + length / 2.0f, ty, tz, 1); // Right face
-    generatePlaneYZ(length, divisions, outFile, tx - length / 2.0f, ty, tz, 0); // Left face
+    generatePlaneXY(length, divisions, outFile, tx, ty, tz - length / 2.0f, 0); // Back face
+    generatePlaneXY(length, divisions, outFile, tx, ty, tz + length / 2.0f, 1); // Front face
+    generatePlaneXZ(length, divisions, outFile, tx, ty - length / 2.0f, tz, 0); // Bottom face
+    generatePlaneXZ(length, divisions, outFile, tx, ty + length / 2.0f, tz, 1); // Top face
+    generatePlaneYZ(length, divisions, outFile, tx + length / 2.0f, ty - length / 2.0f, tz, 1); // Right face
+    generatePlaneYZ(length, divisions, outFile, tx - length / 2.0f, ty - length / 2.0f, tz, 0); // Left face
 }
 
 
@@ -273,9 +273,9 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
         return;
     }
 
-    int totalVertices = slices * stacks; // number of triangles
+    int totalVertices = (slices + 1) * (stacks + 1); // número de vértices
 
-    // Write the total number of vertices in the first line
+    // Escreve o número total de vértices na primeira linha
     outFile << totalVertices << std::endl;
 
     float deltaPhi = M_PI / stacks;
@@ -289,34 +289,31 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
             float theta1 = j * deltaTheta;
             float theta2 = (j + 1) * deltaTheta;
 
-            // Vertices of the triangles
+            // Vértices dos triângulos
             float x1 = radius * sin(phi1) * cos(theta1);
-            float y1 = radius * sin(phi1) * sin(theta1);
-            float z1 = radius * cos(phi1);
+            float y1 = -radius * cos(phi1);
+            float z1 = radius * sin(phi1) * sin(theta1);
 
             float x2 = radius * sin(phi1) * cos(theta2);
-            float y2 = radius * sin(phi1) * sin(theta2);
-            float z2 = radius * cos(phi1);
+            float y2 = -radius * cos(phi1);
+            float z2 = radius * sin(phi1) * sin(theta2);
 
             float x3 = radius * sin(phi2) * cos(theta1);
-            float y3 = radius * sin(phi2) * sin(theta1);
-            float z3 = radius * cos(phi2);
+            float y3 = -radius * cos(phi2);
+            float z3 = radius * sin(phi2) * sin(theta1);
 
             float x4 = radius * sin(phi2) * cos(theta2);
-            float y4 = radius * sin(phi2) * sin(theta2);
-            float z4 = radius * cos(phi2);
+            float y4 = -radius * cos(phi2);
+            float z4 = radius * sin(phi2) * sin(theta2);
 
-            // Writing the triangles formed by the vertices
-            writeVertex(outFile, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-            writeVertex(outFile, x2, y2, z2, x4, y4, z4, x3, y3, z3);
+            // Escreve os triângulos formados pelos vértices
+            writeVertex(outFile, x1, y1, z1, x3, y3, z3, x4, y4, z4);
+            writeVertex(outFile, x1, y1, z1, x4, y4, z4, x2, y2, z2);
         }
     }
 
     outFile.close();
 }
-
-
-
 
 
 int main(int argc, char* argv[]) {
@@ -336,7 +333,7 @@ int main(int argc, char* argv[]) {
             }
             float length = std::stof(argv[2]);
             int divisions = std::stoi(argv[3]);
-            generatePlaneXZ(length, divisions, outFile, 0, 0, 0, 0);
+            generatePlaneXZ(length, divisions, outFile, 0, 0, 0, 1);
             std::cout << "Plano gerado com sucesso e salvo em " << filename << std::endl;
         }
         else if (figura == "planeXY") {
