@@ -20,7 +20,6 @@ void writeVertex(std::ofstream& outFile, float x1, float y1, float z1,
 
 
 void generatePlaneXZ(float length, int divisions, std::ofstream& outFile, float tx, float ty, float tz, int side) {
-    // Calcula o espaçamento entre os vértices
     float spacing = length / divisions;
 
     if (side == 1) {
@@ -36,7 +35,8 @@ void generatePlaneXZ(float length, int divisions, std::ofstream& outFile, float 
                 float x2 = -length / 2.0f + (j + 1) * spacing + tx;
                 float y2 = 0 + ty;
                 float z2 = -length / 2.0f + i * spacing + tz;
-                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << x2 << ", " << y2 << ", " << z2 << std::endl;
+                
+                writeVertex(outFile, x0, y0, z0, x1, y1, z1, x2, y2, z2);
 
                 // Vértices do segundo triângulo
                 float x3 = -length / 2.0f + j * spacing + tx;
@@ -48,7 +48,8 @@ void generatePlaneXZ(float length, int divisions, std::ofstream& outFile, float 
                 float x5 = -length / 2.0f + (j + 1) * spacing + tx;
                 float y5 = 0 + ty;
                 float z5 = -length / 2.0f + (i + 1) * spacing + tz;
-                outFile << x3 << ", " << y3 << ", " << z3 << "; " << x4 << ", " << y4 << ", " << z4 << "; " << x5 << ", " << y5 << ", " << z5 << std::endl;
+                
+                writeVertex(outFile, x3, y3, z3, x4, y4, z4, x5, y5, z5);
             }
         }
     }
@@ -65,7 +66,8 @@ void generatePlaneXZ(float length, int divisions, std::ofstream& outFile, float 
                 float z2 = -length / 2.0f + (j + 1) * spacing + tz;
                 float y2 = 0 + ty;
                 float x2 = -length / 2.0f + i * spacing + tx;
-                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << x2 << ", " << y2 << ", " << z2 << std::endl;
+                
+                writeVertex(outFile, x0, y0, z0, x1, y1, z1, x2, y2, z2);
 
                 // Vértices do segundo triângulo
                 float z3 = -length / 2.0f + j * spacing + tz;
@@ -77,17 +79,16 @@ void generatePlaneXZ(float length, int divisions, std::ofstream& outFile, float 
                 float z5 = -length / 2.0f + (j + 1) * spacing + tz;
                 float y5 = 0 + ty;
                 float x5 = -length / 2.0f + (i + 1) * spacing + tx;
-                outFile << x3 << ", " << y3 << ", " << z3 << "; " << x4 << ", " << y4 << ", " << z4 << "; " << x5 << ", " << y5 << ", " << z5 << std::endl;
+
+                writeVertex(outFile, x3, y3, z3, x4, y4, z4, x5, y5, z5);                
             }
         }
     }
 }
 
 void generatePlaneXY(float length, int divisions, std::ofstream& outFile, float tx, float ty, float tz, int side) {
-    // Calcula o número total de triângulos
     int numTriangles = 2 * divisions * divisions;
 
-    // Calcula o espaçamento entre os vértices
     float spacing = length / divisions;
 
     if (side == 0) {
@@ -103,7 +104,8 @@ void generatePlaneXY(float length, int divisions, std::ofstream& outFile, float 
                 float x2 = -length / 2.0f + (j + 1) * spacing + tx;
                 float y2 = -length / 2.0f + (i + 1) * spacing + ty;
                 float z2 = 0 + tz;
-                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x2 << ", " << y2 << ", " << z2 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << std::endl;
+                
+                writeVertex(outFile, x0, y0, z0, x2, y2, z2, x1, y1, z1);
 
                 // Vértices do segundo triângulo
                 float x3 = -length / 2.0f + j * spacing + tx;
@@ -115,7 +117,8 @@ void generatePlaneXY(float length, int divisions, std::ofstream& outFile, float 
                 float x5 = -length / 2.0f + j * spacing + tx;
                 float y5 = -length / 2.0f + (i + 1) * spacing + ty;
                 float z5 = 0 + tz;
-                outFile << x3 << ", " << y3 << ", " << z3 << "; " << x5 << ", " << y5 << ", " << z5 << "; " << x4 << ", " << y4 << ", " << z4 << "; " << std::endl;
+                
+                writeVertex(outFile, x3, y3, z3, x5, y5, z5, x4, y4, z4);            
             }
         }
     }
@@ -132,7 +135,8 @@ void generatePlaneXY(float length, int divisions, std::ofstream& outFile, float 
                 float y2 = -length / 2.0f + (j + 1) * spacing + ty;
                 float x2 = -length / 2.0f + (i + 1) * spacing + tx;
                 float z2 = 0 + tz;
-                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x2 << ", " << y2 << ", " << z2 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << std::endl;
+
+                writeVertex(outFile, x0, y0, z0, x2, y2, z2, x1, y1, z1);
 
                 // Vértices do segundo triângulo
                 float y3 = -length / 2.0f + j * spacing + ty;
@@ -144,7 +148,8 @@ void generatePlaneXY(float length, int divisions, std::ofstream& outFile, float 
                 float y5 = -length / 2.0f + j * spacing + ty;
                 float x5 = -length / 2.0f + (i + 1) * spacing + tx;
                 float z5 = 0 + tz;
-                outFile << x3 << ", " << y3 << ", " << z3 << "; " << x5 << ", " << y5 << ", " << z5 << "; " << x4 << ", " << y4 << ", " << z4 << "; " << std::endl;
+
+                writeVertex(outFile, x3, y3, z3, x5, y5, z5, x4, y4, z4);            
             }
         }
     }
@@ -165,8 +170,9 @@ void generatePlaneYZ(float length, int divisions, std::ofstream& outFile, float 
                 float x1 = 0 + tx;
                 float y1 = (j + 1) * spacing + ty;
                 float z1 = -length / 2.0f + (i + 1) * spacing + tz;
-                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x0 << ", " << y1 << ", " << z0 << "; " << x1 << ", " << y1 << ", " << z1 << std::endl;
-                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x0 << ", " << y1 << ", " << z1 << "; " << x1 << ", " << y0 << ", " << z1 << std::endl;
+                
+                writeVertex(outFile, x0, y0, z0, x0, y1, z0, x1, y1, z1);
+                writeVertex(outFile, x0, y0, z0, x0, y1, z1, x1, y0, z1);
             }
         }
     }
@@ -179,8 +185,9 @@ void generatePlaneYZ(float length, int divisions, std::ofstream& outFile, float 
                 float x1 = 0 + tx;
                 float y1 = (j + 1) * spacing + ty;
                 float z1 = -length / 2.0f + (i + 1) * spacing + tz;
-                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x1 << ", " << y1 << ", " << z1 << "; " << x0 << ", " << y1 << ", " << z0 << std::endl;
-                outFile << x0 << ", " << y0 << ", " << z0 << "; " << x1 << ", " << y0 << ", " << z1 << "; " << x1 << ", " << y1 << ", " << z1 << std::endl;
+                
+                writeVertex(outFile, x0, y0, z0, x1, y1, z1, x0, y1, z0);
+                writeVertex(outFile, x0, y0, z0, x1, y0, z1, x1, y1, z1);            
             }
         }
     }
@@ -191,15 +198,13 @@ void generateBox(float length, int divisions, std::ofstream& outFile) {
     float ty = 0.0f;
     float tz = 0.0f;
 
-    // generatePlaneXY(length, divisions, filename, tx, ty, tz + length / 2.0f); // Front face
     float tz_adjusted = tz - length / 2.0f;
-    std::cout << "Valor de tz ajustado: " << tz_adjusted << std::endl;
-    generatePlaneXY(length, divisions, outFile, tx, ty, tz - length / 2.0f, 0); // Back face
-    generatePlaneXY(length, divisions, outFile, tx, ty, tz + length / 2.0f, 1); // Front face
-    generatePlaneXZ(length, divisions, outFile, tx, ty - length / 2.0f, tz, 0); // Bottom face
-    generatePlaneXZ(length, divisions, outFile, tx, ty + length / 2.0f, tz, 1); // Top face
-    generatePlaneYZ(length, divisions, outFile, tx + length / 2.0f, ty - length / 2.0f, tz, 1); // Right face
-    generatePlaneYZ(length, divisions, outFile, tx - length / 2.0f, ty - length / 2.0f, tz, 0); // Left face
+    generatePlaneXY(length, divisions, outFile, tx, ty + length / 2.0f, tz - length / 2.0f, 0); // Back face
+    generatePlaneXY(length, divisions, outFile, tx, ty + length / 2.0f, tz + length / 2.0f, 1); // Front face
+    generatePlaneXZ(length, divisions, outFile, tx, ty, tz, 0); // Bottom face
+    generatePlaneXZ(length, divisions, outFile, tx, ty + length, tz, 1); // Top face
+    generatePlaneYZ(length, divisions, outFile, tx + length / 2.0f, ty, tz, 1); // Right face
+    generatePlaneYZ(length, divisions, outFile, tx - length / 2.0f, ty, tz, 0); // Left face
 }
 
 
@@ -275,7 +280,6 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
 
     int totalVertices = (slices + 1) * (stacks + 1); // número de vértices
 
-    // Escreve o número total de vértices na primeira linha
     outFile << totalVertices << std::endl;
 
     float deltaPhi = M_PI / stacks;
@@ -315,6 +319,10 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
 
     outFile.close();
 }
+
+
+
+
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
