@@ -198,13 +198,12 @@ void generateBox(float length, int divisions, std::ofstream& outFile) {
     float ty = 0.0f;
     float tz = 0.0f;
 
-    float tz_adjusted = tz - length / 2.0f;
-    generatePlaneXY(length, divisions, outFile, tx, ty + length / 2.0f, tz - length / 2.0f, 0); // Back face
-    generatePlaneXY(length, divisions, outFile, tx, ty + length / 2.0f, tz + length / 2.0f, 1); // Front face
-    generatePlaneXZ(length, divisions, outFile, tx, ty, tz, 0); // Bottom face
-    generatePlaneXZ(length, divisions, outFile, tx, ty + length, tz, 1); // Top face
-    generatePlaneYZ(length, divisions, outFile, tx + length / 2.0f, ty, tz, 1); // Right face
-    generatePlaneYZ(length, divisions, outFile, tx - length / 2.0f, ty, tz, 0); // Left face
+    generatePlaneXY(length, divisions, outFile, tx, ty, tz - length / 2.0f, 0); // Back face
+    generatePlaneXY(length, divisions, outFile, tx, ty, tz + length / 2.0f, 1); // Front face
+    generatePlaneXZ(length, divisions, outFile, tx, ty - length / 2.0f, tz, 0); // Bottom face
+    generatePlaneXZ(length, divisions, outFile, tx, ty + length / 2.0f, tz, 1); // Top face
+    generatePlaneYZ(length, divisions, outFile, tx + length / 2.0f, ty - length / 2.0f, tz, 1); // Right face
+    generatePlaneYZ(length, divisions, outFile, tx - length / 2.0f, ty - length / 2.0f, tz, 0); // Left face
 }
 
 
