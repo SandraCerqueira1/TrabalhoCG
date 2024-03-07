@@ -221,9 +221,6 @@ void drawCone(float radius, float height, float slices, float stacks, const std:
     float radius2 = radius;
     float prevRadius;
 
-    int vertices = (slices * 3) + slices * (3 + 6 * (stacks - 1));
-    outFile << vertices << std::endl;
-
     for (int j = 1; j <= stacks; j++) {
         topHeight = stackHeight * j;
         radius2 = radius2 - (radius / stacks);
@@ -276,10 +273,6 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
         std::cerr << "Error opening output file." << std::endl;
         return;
     }
-
-    int totalVertices = (slices + 1) * (stacks + 1); // número de vértices
-
-    outFile << totalVertices << std::endl;
 
     float deltaPhi = M_PI / stacks;
     float deltaTheta = 2 * M_PI / slices;
