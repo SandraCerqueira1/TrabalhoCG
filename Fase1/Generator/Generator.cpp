@@ -234,22 +234,24 @@ void drawCone(float radius, float height, float slices, float stacks, const std:
                                     radius * std::sin(alpha2), 0, radius * std::cos(alpha2), 
                                     radius * std::sin(alpha1), 0, radius * std::cos(alpha1));
 
-                writeVertex(outFile, radius * std::sin(alpha2), 0, radius * std::cos(alpha2), 
-                                        radius2 * std::sin(alpha2), topHeight, radius2 * std::cos(alpha2), 
-                                        radius * std::sin(alpha1), 0, radius * std::cos(alpha1));
-
-                writeVertex(outFile, radius * std::sin(alpha1), 0, radius * std::cos(alpha1), 
+                writeVertex(outFile, radius * std::sin(alpha2), 0, radius * std::cos(alpha2),
                                         radius2 * std::sin(alpha2), topHeight, radius2 * std::cos(alpha2), 
                                         radius2 * std::sin(alpha1), topHeight, radius2 * std::cos(alpha1));
+                                        
+
+                writeVertex(outFile,  radius2 * std::sin(alpha1), topHeight, radius2 * std::cos(alpha1),
+                                        radius * std::sin(alpha1), 0, radius * std::cos(alpha1),
+                                        radius * std::sin(alpha2), 0, radius * std::cos(alpha2));
             }
             else if (j != stacks) {
                 writeVertex(outFile, prevRadius * std::sin(alpha2), bottomHeight, prevRadius * std::cos(alpha2), 
                                         radius2 * std::sin(alpha2), topHeight, radius2 * std::cos(alpha2), 
-                                        prevRadius * std::sin(alpha1), bottomHeight, prevRadius * std::cos(alpha1));
-
-                writeVertex(outFile, prevRadius * std::sin(alpha1), bottomHeight, prevRadius * std::cos(alpha1), 
-                                        radius2 * std::sin(alpha2), topHeight, radius2 * std::cos(alpha2), 
                                         radius2 * std::sin(alpha1), topHeight, radius2 * std::cos(alpha1));
+                                        
+
+                writeVertex(outFile, radius2 * std::sin(alpha1), topHeight, radius2 * std::cos(alpha1), 
+                                        prevRadius * std::sin(alpha1), bottomHeight, prevRadius * std::cos(alpha1), 
+                                        prevRadius * std::sin(alpha2), bottomHeight, prevRadius * std::cos(alpha2));
             }
             else {
                 writeVertex(outFile, prevRadius * std::sin(alpha2), bottomHeight, prevRadius * std::cos(alpha2), 
@@ -394,4 +396,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
