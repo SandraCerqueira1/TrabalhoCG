@@ -23,7 +23,7 @@ using namespace tinyxml2;
 using namespace std;
 
 float camX, camY, camZ;  // posição x, y, z da câmera
-int alpha = 0, beta = 0, r = 20;      // ângulos e raio da câmera
+float alpha, beta, r;      // ângulos e raio da câmera
 int xInicial, yInicial, modoRato = 0;   // posições anteriores da câmera e modo da mesma
 double lookX;
 double lookY;
@@ -125,66 +125,18 @@ void renderScene(void) {
     glutSwapBuffers();
 }
 
-
-
-
-// Função que processa as teclas do rato e muda as coordenadas, angulos ou raio da camara com base nisso
-void processMouseButtons(int button, int state, int x, int y) {
-    if (state == GLUT_DOWN) {
-        xInicial = x;
-        yInicial = y;
-        if (button == GLUT_LEFT_BUTTON) {
-            modoRato = 1; // Modo rodar camara
-        }
-        else if (button == GLUT_RIGHT_BUTTON) {
-            modoRato = 2; // Modo aproximar ou afastar camara
-        }
-        else {
-            modoRato = 0;
-        }
-    }
-    else if (state == GLUT_UP) {
-        if (modoRato == 1) { // Muda alpha e beta pois este modo muda a posicao
-            alpha += (x - xInicial);
-            beta += (y - yInicial);
-        }
-        else if (modoRato == 2) { // Muda raio pois este modo muda o zoom
-            r -= y - yInicial;
-            if (r < 3) r = 3.0;
-        }
-        modoRato = 0;
-    }
+// Atualizar a posição da câmera com base nos valores de alpha, beta e r
+void updateCameraPosition() {
+    camX = r * cos(beta) * sin(alpha);
+    camY = r * sin(beta);
+    camZ = r * cos(beta) * cos(alpha);
 }
 
-// Função que faz a movimentacao das variaveis da camara
-void processMouseMotion(int x, int y) {
-    int xAux, yAux;
-    int alphaAux, betaAux;
-    int rAux;
-
-    if (!modoRato) return;
-
-    xAux = x - xInicial;
-    yAux = y - yInicial;
-
-    if (modoRato == 1) {
-        alphaAux = alpha + xAux;
-        betaAux = beta + yAux;
-        if (betaAux > 85.0) betaAux = 85.0;
-        else if (betaAux < -85.0) betaAux = -85.0;
-        rAux = r;
-    }
-    else if (modoRato == 2) {
-        alphaAux = alpha;
-        betaAux = beta;
-        rAux = r - yAux;
-        if (rAux < 3) rAux = 3;
-    }
-
-    // Nova posicao x, y, z da camara
-    camX = rAux * sin(-alphaAux * M_PI / 180.0) * cos(betaAux * M_PI / 180.0);
-    camZ = rAux * cos(-alphaAux * M_PI / 180.0) * cos(betaAux * M_PI / 180.0);
-    camY = rAux * sin(betaAux * M_PI / 180.0);
+// Função para calcular os valores iniciais de alpha, beta e r
+void calculateInitialCameraValues() {
+    alpha = atan2(camZ, camX);
+    beta = atan2(camY, sqrt(camX * camX + camZ * camZ));
+    r = sqrt(camX * camX + camY * camY + camZ * camZ);
 }
 
 // Função que lê o ficheiro XML da pasta ../xml/
@@ -220,8 +172,11 @@ void readXML(string file) {
             camY = atof(pPosition->Attribute("y"));
             camZ = atof(pPosition->Attribute("z"));
 
-            xInicial = camX;
-            yInicial = camY;
+            calculateInitialCameraValues(); // Calcular os valores iniciais de alpha, beta e r
+
+            //beta = camX;
+            //alpha = camY;
+            //r = camZ;
 
             lookX = atof(pLookAt->Attribute("x"));
             lookY = atof(pLookAt->Attribute("y"));
@@ -265,49 +220,47 @@ void readXML(string file) {
     }
 }
 
-void keyboard(unsigned char key, int x, int y) {
-    if (key == 'e') {
-        eixos = !eixos;
+void processKeys(int key, int xx, int yy) {
+    switch (key) {
+    case GLUT_KEY_DOWN:
+        beta -= 0.1f;
+        break;
+    case GLUT_KEY_UP:
+        beta += 0.1f;
+        break;
+    case GLUT_KEY_RIGHT:
+        alpha += 0.1f;
+        break;
+    case GLUT_KEY_LEFT:
+        alpha -= 0.1f;
+        break;
     }
-    else if (key == 'f') {
-        tipo = GL_FILL;
-    }
-    else if (key == 'l') {
-        tipo = GL_LINE;
-    }
-    else if (key == 'p') {
-        tipo = GL_POINT;
-    }
-    else if (key == 'r') {
-        v = 1.0f;
-        g = 0.0f;
-        b = 0.0f;
-    }
-    else if (key == 'g') {
-        v = 0.0f;
-        g = 1.0f;
-        b = 0.0f;
-    }
-    else if (key == 'b') {
-        v = 0.0f;
-        g = 0.0f;
-        b = 1.0f;
-    }
-    else if (key == 'w') {
-        v = 1.0f;
-        g = 1.0f;
-        b = 1.0f;
-    }
+    updateCameraPosition(); // Atualizar a posição da câmara
     glutPostRedisplay();
 }
+
+void processSpecialKeys(unsigned char key, int x, int y) {
+    switch (key) {
+    case '+':
+        r -= 0.5f;
+        break;
+    case '-':
+        r += 0.5f;
+        break;
+    }
+    updateCameraPosition(); // Atualizar a posição da câmara
+    glutPostRedisplay();
+}
+
 
 int main(int argc, char* argv[]) {
     if (argc == 2) {
         readXML(argv[1]);
     }
     else {
-        readXML("test_1_3.xml");
+        readXML("test_1_2.xml");
     }
+    //...
 
     // Inicialização
     glutInit(&argc, argv);
@@ -318,13 +271,11 @@ int main(int argc, char* argv[]) {
 
     // Callback registration
     glutDisplayFunc(renderScene);
-    glutIdleFunc(renderScene);
+    //glutIdleFunc(renderScene);
     glutReshapeFunc(changeSize);
 
-    // Mouse callbacks
-    glutMouseFunc(processMouseButtons);
-    glutMotionFunc(processMouseMotion);
-    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(processKeys);
+    glutKeyboardFunc(processSpecialKeys);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
