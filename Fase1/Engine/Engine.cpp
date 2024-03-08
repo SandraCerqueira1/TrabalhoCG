@@ -42,7 +42,7 @@ bool eixos = true;   // eixos
 int tipo = GL_LINE;   // tipo de desenho: linhas, pontos ou fill
 float v = 0.0f, g = 1.0f, b = 0.0f; // cores do desenho
 
-// Classe ponto que contém as coordenadas x, y, z de cada ponto junto com os getters e setters
+// Classe ponto que contém as coordenadas x, y, z de cada ponto 
 struct Point3D {
     float x, y, z;
     Point3D(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
@@ -80,16 +80,68 @@ void readPointsFromFile(const std::string& filename) {
     }
 }
 
+
+//void drawTriangles() {
+//    glBegin(GL_TRIANGLES);
+//    for (size_t i = 0; i < globalPoints.size(); i += 3) {
+//        if (tipo == GL_FILL) {
+//            // Cores para os vértices do triângulo (azul para roxo)
+//            glColor3f(0.0f, 0.0f, 1.0f);              // Vértice 1 (azul)
+//            glVertex3f(globalPoints[i].x, globalPoints[i].y, globalPoints[i].z);
+//
+//            glColor3f(0.6f, 0.0f, 0.6f);              // Vértice 2 (roxo)
+//            glVertex3f(globalPoints[i + 1].x, globalPoints[i + 1].y, globalPoints[i + 1].z);
+//
+//            glColor3f(0.5f, 0.0f, 0.5f);              // Vértice 3 (roxo)
+//            glVertex3f(globalPoints[i + 2].x, globalPoints[i + 2].y, globalPoints[i + 2].z);
+//        }
+//        else {
+//            // Caso contrário (GL_LINE ou GL_POINT)
+//            glColor3f(1.0f, 1.0f, 1.0f);             
+//            glVertex3f(globalPoints[i].x, globalPoints[i].y, globalPoints[i].z);
+//            glVertex3f(globalPoints[i + 1].x, globalPoints[i + 1].y, globalPoints[i + 1].z);
+//            glVertex3f(globalPoints[i + 2].x, globalPoints[i + 2].y, globalPoints[i + 2].z);
+//        }
+//    }
+//    glEnd();
+//}
+
 void drawTriangles() {
-    glBegin(GL_TRIANGLES);
-    glColor3f(1.0f, 1.0f, 1.0f);
-    for (size_t i = 0; i < globalPoints.size(); i += 3) {
-        glVertex3f(globalPoints[i].x, globalPoints[i].y, globalPoints[i].z);
-        glVertex3f(globalPoints[i + 1].x, globalPoints[i + 1].y, globalPoints[i + 1].z);
-        glVertex3f(globalPoints[i + 2].x, globalPoints[i + 2].y, globalPoints[i + 2].z);
+    // Configurar a espessura dos pontos
+    if (tipo == GL_POINT) {
+        glPointSize(5.0f); // Ajuste a espessura conforme necessário
     }
+
+    glBegin(GL_TRIANGLES);
+    for (size_t i = 0; i < globalPoints.size(); i += 3) {
+        if (tipo == GL_FILL) {
+            // Cores para os vértices do triângulo (azul para roxo)
+            glColor3f(0.0f, 0.0f, 1.0f);              // Vértice 1 (azul)
+            glVertex3f(globalPoints[i].x, globalPoints[i].y, globalPoints[i].z);
+
+            glColor3f(0.5f, 0.0f, 0.5f);              // Vértice 2 (roxo intermediário)
+            glVertex3f(globalPoints[i + 1].x, globalPoints[i + 1].y, globalPoints[i + 1].z);
+
+            glColor3f(0.5f, 0.0f, 0.5f);              // Vértice 3 (roxo intermediário)
+            glVertex3f(globalPoints[i + 2].x, globalPoints[i + 2].y, globalPoints[i + 2].z);
+        }
+        else {
+            // Caso contrário (GL_LINE ou GL_POINT)
+            glColor3f(1.0f, 1.0f, 1.0f);
+            glVertex3f(globalPoints[i].x, globalPoints[i].y, globalPoints[i].z);
+            glVertex3f(globalPoints[i + 1].x, globalPoints[i + 1].y, globalPoints[i + 1].z);
+            glVertex3f(globalPoints[i + 2].x, globalPoints[i + 2].y, globalPoints[i + 2].z);
+        }
+    }
+
     glEnd();
+
+    // Restaurar a espessura padrão
+    if (tipo == GL_POINT) {
+        glPointSize(1.0f); // Ajuste conforme necessário ou retorne à espessura padrão
+    }
 }
+
 
 // Função que desenha os eixos
 void eixo() {
@@ -174,9 +226,7 @@ void readXML(string file) {
 
             calculateInitialCameraValues(); // Calcular os valores iniciais de alpha, beta e r
 
-            //beta = camX;
-            //alpha = camY;
-            //r = camZ;
+            
 
             lookX = atof(pLookAt->Attribute("x"));
             lookY = atof(pLookAt->Attribute("y"));
@@ -247,10 +297,23 @@ void processSpecialKeys(unsigned char key, int x, int y) {
     case '-':
         r += 0.5f;
         break;
+
+    case 'f':
+        tipo = GL_FILL;
+        break;
+    case 'l':
+        tipo = GL_LINE;
+        break;
+    case 'p':
+        tipo = GL_POINT;
+        break;
     }
     updateCameraPosition(); // Atualizar a posição da câmara
     glutPostRedisplay();
 }
+
+
+
 
 
 int main(int argc, char* argv[]) {
@@ -258,9 +321,9 @@ int main(int argc, char* argv[]) {
         readXML(argv[1]);
     }
     else {
-        readXML("test_1_2.xml");
+        readXML("test_1_5.xml");
     }
-    //...
+   
 
     // Inicialização
     glutInit(&argc, argv);
