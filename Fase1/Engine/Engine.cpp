@@ -9,8 +9,6 @@
 #include <GL/glut.h>
 #endif
 
-#include <list>
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -22,34 +20,32 @@
 using namespace tinyxml2;
 using namespace std;
 
-float camX, camY, camZ;  // posição x, y, z da câmera
-float alpha, beta, r;      // ângulos e raio da câmera
-int xInicial, yInicial, modoRato = 0;   // posições anteriores da câmera e modo da mesma
-double lookX;
-double lookY;
-double lookZ;
-double upX;
-double upY;
-double upZ;
+// Variáveis globais para a câmara
+float camX, camY, camZ;
+float alpha, beta, r;
+double lookX, lookY, lookZ;
+double upX, upY, upZ;
 float fov;
-float near;
-float far;
+float nearPlane;
+float farPlane;
 
 int windowWidth;
 int windowHeight;
 
-bool eixos = true;   // eixos
-int tipo = GL_LINE;   // tipo de desenho: linhas, pontos ou fill
-float v = 0.0f, g = 1.0f, b = 0.0f; // cores do desenho
+bool showAxes = true;         // Mostrar ou não os eixos
+int tipo = GL_LINE;       // GL_LINE,  GL_FILL ou GL_Point
+float red = 0.0f, green = 1.0f, blue = 0.0f;
 
-// Classe ponto que contém as coordenadas x, y, z de cada ponto 
+// Estrutura para representar um ponto no espaço tridimensional
 struct Point3D {
     float x, y, z;
     Point3D(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 };
 
+// Vetor para armazenar os pontos lidos dos ficheiros .3d
 std::vector<Point3D> globalPoints;
 
+// Função para atualizar o tamanho da janela
 void changeSize(int w, int h) {
     if (h == 0)
         h = 1;
@@ -57,72 +53,46 @@ void changeSize(int w, int h) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, w, h);
-
-    std::cout << "far value antes: " << far << std::endl;
-    gluPerspective(fov, ratio, near, far);
-    std::cout << "far value : " << far << std::endl;
+    gluPerspective(fov, ratio, nearPlane, farPlane);
     glMatrixMode(GL_MODELVIEW);
 }
 
+
+// Lê as coordenadas dos pontos de um arquivo e os armazena em um vetor global
 void readPointsFromFile(const std::string& filename) {
     std::ifstream file(filename);
     std::string line;
-    while (std::getline(file, line)) {
+    while (std::getline(file, line)) { // Lê cada linha do arquivo
         std::istringstream iss(line);
         float x1, y1, z1, x2, y2, z2, x3, y3, z3;
-        char delimiter;
+        char delimiter;  //vírgula que separa as coordenadas
         iss >> x1 >> delimiter >> y1 >> delimiter >> z1 >> delimiter
             >> x2 >> delimiter >> y2 >> delimiter >> z2 >> delimiter
             >> x3 >> delimiter >> y3 >> delimiter >> z3;
+        //guarda os pontos no vetor
         globalPoints.emplace_back(x1, y1, z1);
         globalPoints.emplace_back(x2, y2, z2);
         globalPoints.emplace_back(x3, y3, z3);
     }
 }
 
-
-//void drawTriangles() {
-//    glBegin(GL_TRIANGLES);
-//    for (size_t i = 0; i < globalPoints.size(); i += 3) {
-//        if (tipo == GL_FILL) {
-//            // Cores para os vértices do triângulo (azul para roxo)
-//            glColor3f(0.0f, 0.0f, 1.0f);              // Vértice 1 (azul)
-//            glVertex3f(globalPoints[i].x, globalPoints[i].y, globalPoints[i].z);
-//
-//            glColor3f(0.6f, 0.0f, 0.6f);              // Vértice 2 (roxo)
-//            glVertex3f(globalPoints[i + 1].x, globalPoints[i + 1].y, globalPoints[i + 1].z);
-//
-//            glColor3f(0.5f, 0.0f, 0.5f);              // Vértice 3 (roxo)
-//            glVertex3f(globalPoints[i + 2].x, globalPoints[i + 2].y, globalPoints[i + 2].z);
-//        }
-//        else {
-//            // Caso contrário (GL_LINE ou GL_POINT)
-//            glColor3f(1.0f, 1.0f, 1.0f);             
-//            glVertex3f(globalPoints[i].x, globalPoints[i].y, globalPoints[i].z);
-//            glVertex3f(globalPoints[i + 1].x, globalPoints[i + 1].y, globalPoints[i + 1].z);
-//            glVertex3f(globalPoints[i + 2].x, globalPoints[i + 2].y, globalPoints[i + 2].z);
-//        }
-//    }
-//    glEnd();
-//}
-
 void drawTriangles() {
-    // Configurar a espessura dos pontos
+    
     if (tipo == GL_POINT) {
-        glPointSize(5.0f); // Ajuste a espessura conforme necessário
+        glPointSize(5.0f); 
     }
 
     glBegin(GL_TRIANGLES);
     for (size_t i = 0; i < globalPoints.size(); i += 3) {
         if (tipo == GL_FILL) {
-            // Cores para os vértices do triângulo (azul para roxo)
-            glColor3f(0.0f, 0.0f, 1.0f);              // Vértice 1 (azul)
+            // Cores para os vértices do triângulo 
+            glColor3f(0.0f, 0.0f, 1.0f);              // Cor Vértice 1 
             glVertex3f(globalPoints[i].x, globalPoints[i].y, globalPoints[i].z);
 
-            glColor3f(0.5f, 0.0f, 0.5f);              // Vértice 2 (roxo intermediário)
+            glColor3f(0.5f, 0.0f, 0.5f);              // Cor Vértice 2 
             glVertex3f(globalPoints[i + 1].x, globalPoints[i + 1].y, globalPoints[i + 1].z);
 
-            glColor3f(0.5f, 0.0f, 0.5f);              // Vértice 3 (roxo intermediário)
+            glColor3f(0.5f, 0.0f, 0.5f);              // Cor Vértice 3 
             glVertex3f(globalPoints[i + 2].x, globalPoints[i + 2].y, globalPoints[i + 2].z);
         }
         else {
@@ -136,48 +106,46 @@ void drawTriangles() {
 
     glEnd();
 
-    // Restaurar a espessura padrão
+   
     if (tipo == GL_POINT) {
-        glPointSize(1.0f); // Ajuste conforme necessário ou retorne à espessura padrão
+        glPointSize(1.0f); 
     }
 }
 
-
-// Função que desenha os eixos
-void eixo() {
+// Função para desenhar os eixos
+void drawAxes() {
     glBegin(GL_LINES);
-    // X axis in red
+    // Eixo X em vermelho
     glColor3f(1.0f, 0.0f, 0.0f);
     glVertex3f(-100.0f, 0.0f, 0.0f);
     glVertex3f(100.0f, 0.0f, 0.0f);
-    // Y Axis in Green
+    // Eixo Y em verde
     glColor3f(0.0f, 1.0f, 0.0f);
     glVertex3f(0.0f, -100.0f, 0.0f);
     glVertex3f(0.0f, 100.0f, 0.0f);
-    // Z Axis in Blue
+    // Eixo Z em azul
     glColor3f(0.0f, 0.0f, 1.0f);
     glVertex3f(0.0f, 0.0f, -100.0f);
     glVertex3f(0.0f, 0.0f, 100.0f);
     glEnd();
 }
 
+// Função para renderizar 
 void renderScene(void) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, tipo);
     glLoadIdentity();
-    gluLookAt(camX, camY, camZ,
-        lookX, lookY, lookZ,
-        upX, upY, upZ);
-    if (eixos) {
-        eixo();
+    gluLookAt(camX, camY, camZ, lookX, lookY, lookZ, upX, upY, upZ); //Posição inicial da câmara
+    if (showAxes) {
+        drawAxes();
     }
-    glColor3f(v, g, b);
-    drawTriangles();
+    glColor3f(red, green, blue);
+    drawTriangles(); //Função para desenhar os triângulos
     glutSwapBuffers();
 }
 
-// Atualizar a posição da câmera com base nos valores de alpha, beta e r
+// Função para atualizar a posição da câmara com base nos valores de alpha, beta e r
 void updateCameraPosition() {
     camX = r * cos(beta) * sin(alpha);
     camY = r * sin(beta);
@@ -191,28 +159,36 @@ void calculateInitialCameraValues() {
     r = sqrt(camX * camX + camY * camY + camZ * camZ);
 }
 
-// Função que lê o ficheiro XML da pasta ../xml/
+/**
+ * Lê um arquivo XML que contém as informações sobre o que deve ser renderizadoo
+ *
+ * @param file - nome do arquivo XML a ser lido
+ */
 void readXML(string file) {
+    // Cria um novo documento XML
     XMLDocument xmlDoc;
-    if (xmlDoc.LoadFile(("../../FicheirosXML/" + file).c_str()) == XML_SUCCESS) {
-        cout << "Ficheiro lido com sucesso" << endl;
 
+    // Tenta carregar o arquivo XML
+    if (xmlDoc.LoadFile(("../../FicheirosXML/" + file).c_str()) == XML_SUCCESS) {
+        cout << "Arquivo XML lido com sucesso" << endl;
+
+        // Obtém o elemento "world" como o elemento raiz do documento XML
         XMLElement* pWorld = xmlDoc.FirstChildElement("world");
+
+        // Verifica se o elemento "world" foi encontrado
         if (!pWorld) {
-            std::cerr << "Erro: Nenhuma tag 'world' encontrada no arquivo XML." << std::endl;
+            cerr << "Erro: Nenhuma tag 'world' encontrada no arquivo XML." << endl;
             return;
         }
 
-        // Extrair informações da janela
+        // Lê as informações da janela (width e height)
         XMLElement* pWindow = pWorld->FirstChildElement("window");
         if (pWindow) {
             windowWidth = atoi(pWindow->Attribute("width"));
             windowHeight = atoi(pWindow->Attribute("height"));
-            cout << "Window width: " << windowWidth << ", height: " << windowHeight << endl;
         }
 
-
-        // Extrair informações da câmera
+        // Lê as informações da câmara (position, lookAt, up, projection)
         XMLElement* pCamera = pWorld->FirstChildElement("camera");
         if (pCamera) {
             XMLElement* pPosition = pCamera->FirstChildElement("position");
@@ -220,33 +196,31 @@ void readXML(string file) {
             XMLElement* pUp = pCamera->FirstChildElement("up");
             XMLElement* pProjection = pCamera->FirstChildElement("projection");
 
+            // Lê as coordenadas da posição da câmara
             camX = atof(pPosition->Attribute("x"));
             camY = atof(pPosition->Attribute("y"));
             camZ = atof(pPosition->Attribute("z"));
 
-            calculateInitialCameraValues(); // Calcular os valores iniciais de alpha, beta e r
+            // Calcula os valores iniciais de alpha, beta e r com base na posição da câmara
+            calculateInitialCameraValues();
 
-            
-
+            // Lê as coordenadas para onde a câmara está olhando (lookAt)
             lookX = atof(pLookAt->Attribute("x"));
             lookY = atof(pLookAt->Attribute("y"));
             lookZ = atof(pLookAt->Attribute("z"));
 
+            // Lê as coordenadas do vetor de orientação da câmara (up)
             upX = atof(pUp->Attribute("x"));
             upY = atof(pUp->Attribute("y"));
             upZ = atof(pUp->Attribute("z"));
 
+            // Lê os parâmetros da projeção (fov, near, far)
             fov = atof(pProjection->Attribute("fov"));
-            near = atof(pProjection->Attribute("near"));
-            far = atof(pProjection->Attribute("far"));
-
-            cout << "Camera position: (" << camX << ", " << camY << ", " << camZ << ")" << endl;
-            cout << "Look at: (" << lookX << ", " << lookY << ", " << lookZ << ")" << endl;
-            cout << "Up vector: (" << upX << ", " << upY << ", " << upZ << ")" << endl;
-            cout << "Projection: fov = " << fov << ", near = " << near << ", far = " << far << endl;
+            nearPlane = atof(pProjection->Attribute("near"));
+            farPlane = atof(pProjection->Attribute("far"));
         }
 
-        // Extrair informações do grupo de modelos
+        // Lê os modelos 3D do grupo de modelos, se houver
         XMLElement* pGroup = pWorld->FirstChildElement("group");
         if (pGroup) {
             XMLElement* pModels = pGroup->FirstChildElement("models");
@@ -255,21 +229,26 @@ void readXML(string file) {
                 while (pModel) {
                     const char* modelFile = pModel->Attribute("file");
                     if (modelFile) {
-                        // Construir o caminho completo para o arquivo do modelo dentro de "Ficheiros3d"
-                        std::string modelPath = "../../Ficheiros3d/";
+                        // Constrói o caminho completo para o arquivo do modelo
+                        string modelPath = "../../Ficheiros3d/";
                         modelPath += modelFile;
+                        // Lê os pontos do arquivo do modelo e os armazena no vetor global
                         readPointsFromFile(modelPath);
                     }
+                    // Avança para o próximo modelo
                     pModel = pModel->NextSiblingElement("model");
                 }
             }
         }
     }
     else {
-        cout << "Erro ao ler o xml" << endl;
+        // Imprime uma mensagem de erro se ocorrer alguma falha ao ler o arquivo XML
+        cout << "Erro ao ler o arquivo XML" << endl;
     }
 }
 
+
+// Função para processar as teclas especiais
 void processKeys(int key, int xx, int yy) {
     switch (key) {
     case GLUT_KEY_DOWN:
@@ -285,37 +264,34 @@ void processKeys(int key, int xx, int yy) {
         alpha -= 0.1f;
         break;
     }
-    updateCameraPosition(); // Atualizar a posição da câmara
+    updateCameraPosition(); //chama a função para atualizar a posição da câmara com os novos valores de alpha, beta e r
     glutPostRedisplay();
 }
 
+// Função para processar as teclas normais
 void processSpecialKeys(unsigned char key, int x, int y) {
     switch (key) {
     case '+':
-        r -= 0.5f;
+        r -= 0.5f;//Aproxima a câmara 
         break;
     case '-':
-        r += 0.5f;
+        r += 0.5f;//Afasta a câmara
         break;
-
     case 'f':
-        tipo = GL_FILL;
+        tipo = GL_FILL; //responsável por colorir a figura
         break;
     case 'l':
-        tipo = GL_LINE;
+        tipo = GL_LINE; // desenha as linhas da figura 
         break;
     case 'p':
-        tipo = GL_POINT;
+        tipo = GL_POINT;//dá display dos pontos usados para desenhar a figura
         break;
     }
-    updateCameraPosition(); // Atualizar a posição da câmara
+    updateCameraPosition();
     glutPostRedisplay();
 }
 
-
-
-
-
+// Função principal
 int main(int argc, char* argv[]) {
     if (argc == 2) {
         readXML(argv[1]);
@@ -323,25 +299,24 @@ int main(int argc, char* argv[]) {
     else {
         readXML("test_1_5.xml");
     }
-   
 
-    // Inicialização
+    // Inicialização do GLUT
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100, 100);
-    glutInitWindowSize(windowWidth, windowHeight); // Alterado para as dimensões desejadas
+    glutInitWindowSize(windowWidth, windowHeight);
     glutCreateWindow("Phase 1");
 
-    // Callback registration
+    // Registro de callbacks
     glutDisplayFunc(renderScene);
-    //glutIdleFunc(renderScene);
     glutReshapeFunc(changeSize);
-
     glutSpecialFunc(processKeys);
     glutKeyboardFunc(processSpecialKeys);
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE); //Responsável por não renderizar as faces trazeiras da figura
+
+    // Loop principal do GLUT
     glutMainLoop();
 
     return 1;
