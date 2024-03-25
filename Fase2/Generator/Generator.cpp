@@ -406,7 +406,7 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
  * @param slices Número de fatias do anel.
  * @param outFile Arquivo de saída onde os vértices serão salvos.
  */
-void generateRing(float ri, float re, int slices, std::ofstream& outFile) {
+void generateRingCima(float ri, float re, int slices, std::ofstream& outFile) {
     // Calcula o ângulo entre as fatias
     float delta = (2 * M_PI) / slices;
     float a = 0;
@@ -445,6 +445,73 @@ void generateRing(float ri, float re, int slices, std::ofstream& outFile) {
         writeVertex(outFile, x3, y3, z3, x4, y4, z4, x5, y5, z5);
     }
 }
+
+/**
+ * @brief Gera um anel e grava os vértices num arquivo .3d voltado para baixo
+ *
+ * @param ri Raio interno do anel.
+ * @param re Raio externo do anel.
+ * @param slices Número de fatias do anel.
+ * @param outFile Arquivo de saída onde os vértices serão salvos.
+ */
+void generateRingBaixo(float ri, float re, int slices, std::ofstream& outFile) {
+    // Calcula o ângulo entre as fatias
+    float delta = (2 * M_PI) / slices;
+    float a = 0;
+
+    for (int i = 0; i < slices; ++i, a += delta) {
+        // Vértices do primeiro triângulo
+        float x0 = ri * cos(a);
+        float y0 = 0.0f;
+        float z0 = ri * sin(a);
+
+        float x1 = re * cos(a);
+        float y1 = 0.0f;
+        float z1 = re * sin(a);
+
+        float x2 = ri * cos(a + delta);
+        float y2 = 0.0f;
+        float z2 = ri * sin(a + delta);
+
+        // Escreve os vértices no arquivo
+        writeVertex(outFile, x0, y0, z0, x1, y1, z1, x2, y2, z2);
+
+        // Vértices do segundo triângulo
+        float x3 = ri * cos(a + delta);
+        float y3 = 0.0f;
+        float z3 = ri * sin(a + delta);
+
+        float x4 = re * cos(a);
+        float y4 = 0.0f;
+        float z4 = re * sin(a);
+
+        float x5 = re * cos(a + delta);
+        float y5 = 0.0f;
+        float z5 = re * sin(a + delta);
+
+        // Escreve os vértices no arquivo
+        writeVertex(outFile, x3, y3, z3, x4, y4, z4, x5, y5, z5);
+    }
+}
+
+/**
+ * @brief Gera um anel e grava os vértices num arquivo .3d permitindo visualização de ambos os lados
+ *
+ * @param ri Raio interno do anel.
+ * @param re Raio externo do anel.
+ * @param slices Número de fatias do anel.
+ * @param outFile Arquivo de saída onde os vértices serão salvos.
+ */
+void generateRingAmbosLados(float ri, float re, int slices, std::ofstream& outFile) {
+    generateRingCima(ri, re, slices, outFile); // Gera a parte de cima do anel
+    generateRingBaixo(ri, re, slices, outFile); // Gera a parte de baixo do anel
+}
+
+
+
+
+
+
 
 
 
@@ -522,7 +589,7 @@ int main(int argc, char* argv[]) {
             float ri = std::stof(argv[2]);
             float re = std::stof(argv[3]);
             int slices = std::stoi(argv[4]);
-            generateRing(ri, re, slices, outFile);
+           generateRingAmbosLados(ri, re, slices, outFile);
             std::cout << "Anel gerado com sucesso e salvo em " << filename << std::endl;
         }
         else {
