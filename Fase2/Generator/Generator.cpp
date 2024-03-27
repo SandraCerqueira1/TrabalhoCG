@@ -366,9 +366,9 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
 
         for (int j = 0; j < slices; ++j) { // ciclo que itera sobre as diferentes slices
 
-            float deltaThetaAdjusted = deltaTheta / 2.0f; //permite ajustar a posição da esfera
-            float theta1 = (j * deltaTheta) - deltaThetaAdjusted; //alteração de theta em relação à slice em que se encontra
-            float theta2 = ((j + 1) * deltaTheta) - deltaThetaAdjusted; //alteração de theta em relação à slice em que se encontra , para os pontos mais à esquerda
+            //float deltaThetaAdjusted = deltaTheta / 2.0f; //permite ajustar a posição da esfera
+            float theta1 = (j * deltaTheta); //alteração de theta em relação à slice em que se encontra
+            float theta2 = ((j + 1) * deltaTheta); //alteração de theta em relação à slice em que se encontra , para os pontos mais à esquerda
 
             // Vértices dos triângulos
             float x1 = radius * sin(phi1) * cos(theta1);
@@ -395,8 +395,6 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
 
     outFile.close();
 }
-
-
 
 /**
  * @brief Gera um anel e grava os vértices num arquivo .3d
@@ -511,10 +509,6 @@ void generateRingAmbosLados(float ri, float re, int slices, std::ofstream& outFi
 
 
 
-
-
-
-
 int main(int argc, char* argv[]) {
     if (argc < 4) {
         std::cerr << "Uso: " << argv[0] << " <figura> <parâmetros da figura> <arquivo_saida>" << std::endl;
@@ -589,7 +583,7 @@ int main(int argc, char* argv[]) {
             float ri = std::stof(argv[2]);
             float re = std::stof(argv[3]);
             int slices = std::stoi(argv[4]);
-           generateRingAmbosLados(ri, re, slices, outFile);
+            generateRingAmbosLados(ri, re, slices, outFile);
             std::cout << "Anel gerado com sucesso e salvo em " << filename << std::endl;
         }
         else {
