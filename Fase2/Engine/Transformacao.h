@@ -10,7 +10,7 @@ public:
     float x;
     float y;
     float z;
-    std::vector<float> color; // tuple with rgb
+
 
     Transformacao(); // Default constructor
     Transformacao(float type, float a, float b, float c, float angle = 0); // Parameterized constructor

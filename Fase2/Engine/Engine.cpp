@@ -153,10 +153,10 @@ void drawGrupo(Grupo gR) {
 
 void drawGrupos() {
 	for (int i = 0; i < gruposLista.size(); i++) {
-		// std::cout << endl;
 		drawGrupo(gruposLista[i]);
 	}
 }
+
 
 
 // Função para desenhar os eixos
@@ -210,8 +210,6 @@ void calculateInitialCameraValues() {
 
 void readGroup(XMLElement* group, Grupo* grupo) {
 
-	// std::cout << "readGroup" << endl;
-
 	XMLElement* models = group->FirstChildElement("models");
 	if (models == nullptr) {
 		cout << "No models Found" << endl;
@@ -237,7 +235,7 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 					modelo.b = atof(colorElement->Attribute("b"));
 				}
 				else {
-					// Se não houver cor especificada, defina uma cor padrão
+					// Se não houver cor especificada mete cor padrão
 					modelo.r = 1.0f;
 					modelo.g = 1.0f;
 					modelo.b = 1.0f;
@@ -262,9 +260,6 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 				Transformacao t = *new Transformacao(0, x, y, z);
 				transformacoesLista.push_back(t);
 				grupo->transforms.push_back(t);
-				// std::cout << x << endl;
-				// std::cout << y << endl;
-				// std::cout << z << endl;
 			}
 			if (strcmp(trf->Value(), "rotate") == 0) {
 				float x = 0, y = 0, z = 0, angle = 0;
@@ -275,10 +270,6 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 				Transformacao t = *new Transformacao(1, x, y, z, angle);
 				transformacoesLista.push_back(t);
 				grupo->transforms.push_back(t);
-				// std::cout << x << endl;
-				// std::cout << y << endl;
-				// std::cout << z << endl;
-				// std::cout << angle << endl;
 			}
 			if (strcmp(trf->Value(), "scale") == 0) {
 				float x = 0, y = 0, z = 0;
@@ -288,9 +279,6 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 				Transformacao t = *new Transformacao(2, x, y, z);
 				transformacoesLista.push_back(t);
 				grupo->transforms.push_back(t);
-				// std::cout << x << endl;
-				// std::cout << y << endl;
-				// std::cout << z << endl;
 			}
 		}
 	}
@@ -304,7 +292,6 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 		grID++;
 		readGroup(filhos, &filho);
 		(*grupo).addFilho(filho);
-		//gruposLista.push_back(filho);
 		filhos = filhos->NextSiblingElement();
 	}
 }
@@ -382,19 +369,17 @@ void readXML(string file) {
 			readGroup(group, &g);
 			gruposLista.push_back(g);
 			group = group->NextSiblingElement();
-			// loop through all the elements in the group
-			// std::cout << "Group Size: " << gruposLista.size() << endl;
 		}
 	}
 	else {
-		// Imprime uma mensagem de erro se ocorrer alguma falha ao ler o arquivo XML
+		//  erro se ocorrer alguma falha ao ler o XML
 		cout << "Erro ao ler o arquivo XML" << endl;
 	}
 
 
 	for (size_t i = 0; i < gruposLista.size(); ++i) {
 		cout << "Grupo " << i << ":" << endl;
-		// Aqui você pode adicionar mais informações conforme necessário
+	
 	}
 }
 
@@ -448,7 +433,7 @@ int main(int argc, char* argv[]) {
 		readXML(argv[1]);
 	}
 	else {
-		readXML("sistema_solar_normal.xml");
+		readXML("test_2_4.xml");
 	}
 
 	// Inicialização do GLUT
