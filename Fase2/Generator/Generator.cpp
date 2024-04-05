@@ -402,7 +402,7 @@ void generateSphere(float radius, int slices, int stacks, const std::string& fil
  * @param ri Raio interno do anel.
  * @param re Raio externo do anel.
  * @param slices Número de fatias do anel.
- * @param outFile Arquivo de saída onde os vértices serão salvos.
+ * @param outFile ficheiro onde serão escritos os vértices
  */
 void generateRingCima(float ri, float re, int slices, std::ofstream& outFile) {
     // Calcula o ângulo entre as fatias
@@ -450,7 +450,7 @@ void generateRingCima(float ri, float re, int slices, std::ofstream& outFile) {
  * @param ri Raio interno do anel.
  * @param re Raio externo do anel.
  * @param slices Número de fatias do anel.
- * @param outFile Arquivo de saída onde os vértices serão salvos.
+ * @param outFile ficheiro onde serão escritos os vértices
  */
 void generateRingBaixo(float ri, float re, int slices, std::ofstream& outFile) {
     // Calcula o ângulo entre as fatias
@@ -498,7 +498,7 @@ void generateRingBaixo(float ri, float re, int slices, std::ofstream& outFile) {
  * @param ri Raio interno do anel.
  * @param re Raio externo do anel.
  * @param slices Número de fatias do anel.
- * @param outFile Arquivo de saída onde os vértices serão salvos.
+ * @param outFile ficheiro onde serão escritos os vértices
  */
 void generateRingAmbosLados(float ri, float re, int slices, std::ofstream& outFile) {
     generateRingCima(ri, re, slices, outFile); // Gera a parte de cima do anel
