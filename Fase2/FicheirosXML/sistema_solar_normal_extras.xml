@@ -1,0 +1,623 @@
+<!--  generator box 1 1  box.3d  -->
+<!--  generator cone 1 1 4 3  cone.3d  -->
+<!--  generator ring 1.5 2.5 30 window.3d -->
+<!--  generator cone .5 4 4 3  cone_fire.3d -->
+<!--  generator sphere 1 8 8  comet.3d -->
+<!--  generator plane 1 9  plane.3d -->
+
+ 
+
+
+<world>
+	<window width="800" height="512" />
+	<camera>
+		<position x="100" y="100" z="100" />
+		<lookAt x="0" y="0" z="0" />
+		<up x="0" y="1" z="0" />
+		<projection fov="30" near="1" far="1000" />
+	</camera>
+	<group>
+		<transform>
+			<scale x="20" y="20" z="20"/>
+		</transform>
+		<models>
+			<model file="sphere.3d">
+				<color r="1.0" g="1.0" b="0.0" />
+				<!-- Sol -->
+			</model>
+		</models>
+	</group>
+	<group>
+		<transform>
+			<rotate angle="45" x="0" y="1" z="0"/>
+			<translate x="24" y="0" z="0"/>
+			<scale x="0.3" y="0.3" z="0.3"/>
+		</transform>
+		<models>
+			<model file="sphere.3d">
+				<color r="0.8" g="0.3" b="0.0" />
+				<!-- Mercúrio -->
+			</model>
+		</models>
+	</group>
+	<group>
+		<transform>
+			<rotate angle="89" x="0" y="1" z="0"/>
+			<translate x="29" y="0" z="0"/>
+			<scale x="0.5" y="0.5" z="0.5"/>
+		</transform>
+		<models>
+			<model file="sphere.3d">
+				<color r="0.9" g="0.5" b="0.0" />
+				<!-- Vénus -->
+			</model>
+		</models>
+	</group>
+	<group>
+		<transform>
+			<rotate angle="185" x="0" y="1" z="0"/>
+			<translate x="34" y="0" z="0"/>
+		</transform>
+		<group>
+			<transform>
+				<scale x="0.5" y="0.5" z="0.5"/>
+			</transform>
+			<models>
+				<model file="sphere.3d">
+					<color r="0.0" g="0.5" b="1.0" />
+					<!-- Terra -->
+				</model>
+			</models>
+		</group>
+		<group>
+			<transform>
+				<translate x="0" y="0" z="1"/>
+				<scale x="0.1" y="0.1" z="0.1"/>
+			</transform>
+			<models>
+				<model file="sphere.3d">
+					<color r="0.8" g="0.8" b="0.8" />
+					<!-- Lua -->
+				</model>
+			</models>
+		</group>
+	</group>
+	<group>
+		<transform>
+			<rotate angle="240" x="0" y="1" z="0"/>
+			<translate x="39" y="0" z="0"/>
+			<scale x="0.4" y="0.4" z="0.4"/>
+		</transform>
+		<models>
+			<model file="sphere.3d">
+				<color r="1.0" g="0.2" b="0.0" />
+				<!-- Marte -->
+			</model>
+		</models>
+	</group>
+	<group>
+		<transform>
+			<rotate angle="300" x="0" y="1" z="0"/>
+			<translate x="49" y="0" z="0"/>
+			<scale x="6" y="6" z="6"/>
+		</transform>
+		<models>
+			<model file="sphere.3d">
+				<color r="0.6" g="0.3" b="0.0" />
+				<!-- Júpiter -->
+			</model>
+		</models>
+	</group>
+	<group>
+		<transform>
+			<rotate angle="30" x="0" y="1" z="0"/>
+			<translate x="66" y="0" z="0"/>
+		</transform>
+		<group>
+			<transform>
+				<scale x="5" y="5" z="5"/>
+			</transform>
+			<models>
+				<model file="sphere.3d">
+					<color r="0.9" g="0.8" b="0.6" />
+					<!-- Saturno -->
+				</model>
+			</models>
+		</group>
+		<group>
+			<transform>
+				<rotate angle="20" x="1" y="0" z="1"/>
+				<scale x="5" y="5" z="5"/>
+			</transform>
+			<models>
+				<model file="anel.3d">
+					<color r="0.9" g="0.8" b="0.6" />
+					<!-- Anel de Saturno -->
+				</model>
+			</models>
+		</group>
+	</group>
+	<group>
+		<transform>
+			<rotate angle="200" x="0" y="1" z="0"/>
+			<translate x="80" y="0" z="0"/>
+			<scale x="3" y="3" z="3"/>
+		</transform>
+		<models>
+			<model file="sphere.3d">
+				<color r="0.1" g="0.3" b="0.7" />
+				<!-- Úrano -->
+			</model>
+		</models>
+	</group>
+	<group>
+		<transform>
+			<rotate angle="150" x="0" y="1" z="0"/>
+			<translate x="90" y="0" z="0"/>
+			<scale x="3" y="3" z="3"/>
+		</transform>
+		<models>
+			<model file="sphere.3d">
+				<color r="0.0" g="0.1" b="0.3" />
+				<!-- Neptuno -->
+			</model>
+		</models>
+	</group>
+	<!-- Cometa -->
+	<group>
+		<transform>
+			<translate x="20" y="0" z="35" />
+			<rotate angle="90" x="0" y="1" z="0" />
+			<scale x=".7" y=".7" z=".7" />
+		</transform>
+		<group>
+			<transform>
+				<scale x="0.5" y="0.5" z="0.5" />
+			</transform>
+			<models>
+				<model file="comet.3d">
+					<color r="0.5" g="0.5" b="0.5" />
+				</model>
+			</models>
+		</group>		<!-- Tail do cometa -->
+		<group>
+			<transform>
+				<translate x=".2" y="0" z="0" />
+				<rotate angle="270" x="1" y="0" z="1" />
+				<scale x=".5" y=".5" z=".5" />
+			</transform>
+
+			<!-- Cone do fundo amarelo -->
+			<group>
+				<transform>
+					<rotate angle="45" x="0" y="1" z="0" />
+				</transform>
+				<models>
+					<model file="cone_fire.3d">
+						<color r="0.9" g="0.8" b="0.6" />
+					</model>
+				</models>
+			</group>
+
+			<!-- Cone do fundo laranja-->
+			<group>
+				<models>
+					<model file="cone_fire.3d">
+						<color r="1.0" g="0.5" b="0.0" />
+					</model>
+				</models>
+			</group>
+		</group>
+	</group>
+
+	<group>		<!-- Foguetão -->
+		<transform>
+			<translate x="50" y="0" z="0" />
+			<rotate angle="90" x="1" y="0" z="0"/>
+			<rotate angle="180" x="1" y="0" z="1"/>
+		</transform>
+		<group>
+			<transform>
+				<rotate angle="45" x="0" y="0" z="0" />
+			</transform>
+			<group>
+				<!-- First Box -->
+				<transform>
+					<translate x="0" y="1" z="0" />
+				</transform>
+				<models>
+					<model file="box.3d">
+						<color r="0.7" g="0.7" b="0.7" />
+					</model>
+				</models>
+			</group>
+			<group>
+				<!-- Second Box -->
+				<transform>
+					<translate x="0" y="0" z="0" />
+				</transform>
+				<models>
+					<model file="box.3d">
+						<color r="0.7" g="0.7" b="0.7" />
+					</model>
+				</models>
+			</group>
+		</group>
+
+		<!-- Direita -->
+		<group>
+			<transform>
+				<translate x="0" y="0" z="0" />
+				<rotate angle="45" x="0" y="0" z="0" />
+			</transform>
+			<group>
+				<!-- Fist Box -->
+				<transform>
+					<translate x=".6" y="-0" z="0" />
+					<scale x=".3" y=".3" z=".5" />
+				</transform>
+				<models>
+					<model file="box.3d">
+						<color r="1.0" g="0.0" b="0.0" />
+					</model>
+				</models>
+			</group>
+
+			<group>
+				<!-- Second Box -->
+				<transform>
+					<translate x=".63" y="-0.3" z="0" />
+					<scale x=".3" y=".3" z=".5" />
+				</transform>
+				<models>
+					<model file="box.3d">
+						<color r="1.0" g="0.0" b="0.0" />
+					</model>
+				</models>
+			</group>
+
+			<group>
+				<!-- Third Box -->
+				<transform>
+					<translate x=".66" y="-0.6" z="0" />
+					<scale x=".3" y=".3" z=".5" />
+				</transform>
+				<models>
+					<model file="box.3d">
+						<color r="1.0" g="0.0" b="0.0" />
+					</model>
+				</models>
+			</group>
+
+			<group>
+				<!-- Forth Box -->
+				<transform>
+					<translate x=".69" y="-0.9" z="0" />
+					<scale x=".3" y=".3" z=".5" />
+				</transform>
+				<models>-
+					<model file="box.3d">
+						<color r="1.0" g="0.0" b="0.0" />
+					</model>
+				</models>
+			</group>
+		</group>
+		<!-- Esquerda -->
+		<group>
+			<transform>
+				<translate x="0" y="0" z="0" />
+				<rotate angle="45" x="0" y="0" z="0" />
+			</transform>
+			<group>
+				<!-- Fist Box -->
+				<transform>
+					<translate x="-.6" y="-0" z="0" />
+					<scale x=".3" y=".3" z=".5" />
+				</transform>
+				<models>
+					<model file="box.3d">
+						<color r="1.0" g="0.0" b="0.0" />
+					</model>
+				</models>
+			</group>
+
+			<group>
+				<!-- Second Box -->
+				<transform>
+					<translate x="-.63" y="-0.3" z="0" />
+					<scale x=".3" y=".3" z=".5" />
+				</transform>
+				<models>
+					<model file="box.3d">
+						<color r="1.0" g="0.0" b="0.0" />
+					</model>
+				</models>
+			</group>
+
+			<group>
+				<!-- Third Box -->
+				<transform>
+					<translate x="-.66" y="-0.6" z="0" />
+					<scale x=".3" y=".3" z=".5" />
+				</transform>
+				<models>
+					<model file="box.3d">
+						<color r="1.0" g="0.0" b="0.0" />
+					</model>
+				</models>
+			</group>
+
+			<group>
+				<!-- Forth Box -->
+				<transform>
+					<translate x="-.69" y="-0.9" z="0" />
+					<scale x=".3" y=".3" z=".5" />
+				</transform>
+				<models>
+					<model file="box.3d">
+						<color r="1.0" g="0.0" b="0.0" />
+					</model>
+				</models>
+			</group>
+		</group>
+		<group>
+			<transform> 
+				<translate x="0" y=".7" z=".375" />
+				<scale x=".1" y=".1" z=".1"/>
+				<rotate angle="90" x="1" y="0" z="0"/>
+				<rotate angle="90" x="0" y="1" z="0"/>
+			</transform>
+				<models>
+					<model file="window.3d">
+						<color r="0.5" g="0.5" b="0.5" /> 
+					</model>
+				</models>
+		</group>
+		<!-- Janela de tras -->
+		<group>			
+			<transform> 
+				<translate x="0" y=".7" z="-.375" />
+				<scale x=".1" y=".1" z=".1"/>
+				<rotate angle="90" x="1" y="0" z="0"/>
+				<rotate angle="90" x="0" y="1" z="0"/>
+				<rotate angle="180" x="1" y="0" z="1"/>
+			</transform>
+				<models>
+					<model file="window.3d">
+						<color r="0.5" g="0.5" b="0.5" /> 
+					</model>
+				</models>
+		</group>
+		<!-- Cone do topo -->
+		<group>
+			<transform>
+				<translate x="0" y="1.05" z="0" />
+				<rotate angle="45" x="0" y="1" z="0" />
+				<scale x=".5" y=".5" z=".5" />
+			</transform>
+			<models>
+				<model file="cone.3d">
+					<color r="1.0" g="0.0" b="0.0" />
+				</model>
+			</models>
+		</group>
+		<!-- Bottom fire -->
+		<group>
+			<transform>
+				<translate x="0" y="0.5 " z="0" />
+				<rotate angle="180" x="1" y="0" z="1" />
+				<scale x=".5" y=".5" z=".5" />
+			</transform>
+			<!-- Cone do fundo amarelo-->
+			<group>
+				<transform>
+					<rotate angle="45" x="0" y="1" z="0" />
+				</transform>
+				<models>
+					<model file="cone_fire.3d">
+						<color r="0.9" g="0.8" b="0.6" />
+					</model>
+				</models>
+			</group>
+			<!-- Cone do fundo laranja-->
+			<group>
+				<models>
+					<model file="cone_fire.3d">
+						<color r="1.0" g="0.5" b="0.0" />
+					</model>
+				</models>
+			</group>
+		</group>
+	</group>
+
+	<!-- Space ship -->
+    <group>
+        <transform> 
+			<translate x="-45" y="0" z="15" />
+            <rotate angle="90" x="1" y="0" z="0" />
+			<scale x=".5" y=".5" z=".5" />
+        </transform>
+        <group>
+            <!-- First Box -->
+            <transform> 
+                <translate x="0" y="1" z="0" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Second Box -->
+            <transform> 
+                <translate x="0" y="0" z="0" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+        <!-- Braços -->
+
+        <!-- Direita -->
+        <group>
+            <!-- Third Box -->
+            <transform> 
+                <translate x=".55" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Forth Box -->
+            <transform> 
+                <translate x=".70" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+        <group>
+            <!-- Fifth Box -->
+            <transform> 
+                <translate x=".85" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <!-- Esquerda -->
+        <group>
+            <!-- Sixth Box -->
+            <transform> 
+                <translate x="-.55" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Seventh Box -->
+            <transform> 
+                <translate x="-.70" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+        <group>
+            <!-- Eight Box -->
+            <transform> 
+                <translate x="-.85" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Plane direita frente -->
+            <transform> 
+                <translate x="1.8" y=".7" z=".15" />
+                <rotate angle="60" x="1" y="0" z="0" />
+                <scale x="2" y="2" z="2" />
+            </transform>
+            <models> 
+                <model file="plane.3d"> 
+                    <color r="0" g="0" b="255" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Plane direita tras -->
+            <transform> 
+                <translate x="1.8" y=".7" z="-.15" />
+                <rotate angle="240" x="1" y="0" z="0" />
+                <scale x="2" y="2" z="2" />
+            </transform>
+            <models> 
+                <model file="plane.3d"> 
+                    <color r="0" g="0" b="255" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Plane esquerda frente -->
+            <transform> 
+                <translate x="-1.8" y=".7" z=".15" />
+                <rotate angle="60" x="1" y="0" z="0" />
+                <scale x="2" y="2" z="2" />
+            </transform>
+            <models> 
+                <model file="plane.3d"> 
+                    <color r="0" g="0" b="255" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Plane esquerda tras -->
+            <transform> 
+                <translate x="-1.8" y=".7" z="-.15" />
+                <rotate angle="240" x="1" y="0" z="0" />
+                <scale x="2" y="2" z="2" />
+            </transform>
+            <models> 
+                <model file="plane.3d"> 
+                    <color r="0" g="0" b="255" />
+                </model>
+            </models>
+        </group>
+        <!-- Janela de cima -->
+        <group>
+            <transform> 
+                <translate x="0" y="1.51" z="0" />
+                <scale x=".15" y=".15" z=".15"/>
+            </transform>
+                <models>
+                    <model file="window.3d">
+                        <color r="0.5" g="0.5" b="0.5" /> 
+                    </model>
+                </models>
+        </group>
+        <group>
+            <transform> 
+                <translate x="0" y="-.80" z="0" />
+                <rotate angle="45" x="0" y="1" z="0" />
+                <scale x=".7" y=".7" z=".7"/>
+            </transform>
+                <models>
+                    <model file="cone.3d">
+                        <color r="0.5" g="0.5" b="0.5" /> 
+                    </model>
+                </models>
+        </group>
+	</group>
+</world>

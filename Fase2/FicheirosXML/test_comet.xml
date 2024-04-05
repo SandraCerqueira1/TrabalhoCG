@@ -1,0 +1,56 @@
+<world>
+    <window width="512" height="512" />
+    <camera> 
+	    <position x="3" y="2" z="3" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="60" near="1" far="1000" /> <!-- optional, use these values as default-->
+    </camera>
+	<!-- generator cone .5 4 4 3  fire_cone.3d-->
+    <!-- generator sphere 1 8 8 sphere_1_8_8.3d -->
+<!-- Esfera do cometa -->	
+<group>    
+    <group>
+        <transform> 
+            <scale x="0.5" y="0.5" z="0.5" />
+        </transform>
+        <models>
+            <model file="sphere.3d">
+                <color r="0.5" g="0.5" b="0.5" />
+            </model>
+        </models>
+    </group>
+
+
+<!-- Tail do cometa -->				
+    <group>
+        <transform> 
+                <translate x=".2" y="0" z="0" />
+                <rotate angle="270" x="1" y="0" z="1" />
+                 <scale x=".5" y=".5" z=".5" />
+        </transform>
+
+        <!-- Cone do fundo amarelo -->	
+        <group>
+            <transform> 
+                <rotate angle="45" x="0" y="1" z="0" />
+            </transform>
+            <models>
+                    <model file="cone_fire.3d">
+                        <color r="0.9" g="0.8" b="0.6" />
+                    </model>
+                </models>
+        </group>
+
+        <!-- Cone do fundo laranja-->					
+        <group>
+            <models>
+                    <model file="cone_fire.3d">
+                        <color r="1.0" g="0.5" b="0.0" />
+                    </model>
+                </models>
+        </group>
+    </group>
+</group>
+</world>
+
