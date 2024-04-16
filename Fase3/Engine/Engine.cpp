@@ -72,10 +72,63 @@ void changeSize(int w, int h) {
 void applyTransformations(Transformacao t) {
 	switch (t.type) {
 	case(0): // 0 - Translate
-		glTranslatef(t.x, t.y, t.z);
+		if(t.time != 0 && t.catmullRomPoints.size() >= 4){ // se for uma curva de catmull rom
+			float pos[3];
+			float deriv[3];
+
+
+			// --------------------- Build and Draw curve
+
+			int NUM_SEG = 100;
+			float te = 0.0f, inc = 1.0f/NUM_SEG;
+
+			/* glColor3f(0.4f,0.4f,0.4f);
+			glBegin(GL_LINES);
+				for (int i=0 ; i<NUM_SEG ; i++){
+					te+=inc;
+					getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
+					glVertex3f(pos[0], pos[1], pos[2]);
+					glVertex3f(pos[0]+deriv[0], pos[1]+deriv[1], pos[2]+deriv[2]);
+				}
+			glEnd(); */
+
+			getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
+			// draw curve using line segments with GL_LINE_LOOP
+			glColor3f(1.0f,1.0f,1.0f);
+			glBegin(GL_LINE_LOOP);
+			for (int i=0 ; i<NUM_SEG ; i++, te+=inc){
+				getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
+				glVertex3f(pos[0], pos[1], pos[2]);
+			}
+			glEnd();
+
+
+			// --------------------- Make Movement
+
+			float time = glutGet(GLUT_ELAPSED_TIME) % (int)(t.time * 1000) / (t.time * 1000); // makes the actual movement
+			getGlobalCatmullRomPoint(time, pos, deriv, t.catmullRomPoints);
+			glTranslatef(pos[0], pos[1], pos[2]);
+			alinhamentoCurva(deriv);
+		}
+		else {
+			glTranslatef(t.x, t.y, t.z);
+		}
 		break;
 	case(1): // 1 - Rotate
-		glRotatef(t.angle, t.x, t.y, t.z);
+		if (t.angle != 0) {
+			glRotatef(t.angle, t.x, t.y, t.z);
+		}
+		else {
+			float aux, anguloRot;
+			int tempoPrograma;
+
+			if (t.time != 0) {
+				tempoPrograma = glutGet(GLUT_ELAPSED_TIME);
+				aux = tempoPrograma % (int)(t.time * 1000);
+				anguloRot = (aux * 360) / (t.time * 1000);
+				glRotatef(anguloRot, t.x, t.y, t.z);
+			}
+		}
 		break;
 	case(2): // 2 - Scale
 		cout << t.x << endl;
@@ -285,8 +338,33 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 				if (trf->Attribute("y") != nullptr) y = stof(trf->Attribute("y"));
 				if (trf->Attribute("z") != nullptr) z = stof(trf->Attribute("z"));
 				Transformacao t = *new Transformacao(0, x, y, z);
+
+				if (trf->Attribute("time") != nullptr){time = stof(trf->Attribute("time")); t.time = time;}
+				if (trf->Attribute("align") != nullptr){
+					if (strcmp(trf->Attribute("align"), "false") == 0 || strcmp(trf->Attribute("align"), "False") == 0)
+                        t.align = false;
+				}
+
+				// pontos das curvas catmull
+                for (XMLElement *ponto = trf->FirstChildElement("point"); ponto != nullptr; ponto = ponto->NextSiblingElement()) {
+                    float p_x = stof(ponto->Attribute("x"));
+                    float p_y = stof(ponto->Attribute("y"));
+                    float p_z = stof(ponto->Attribute("z"));
+					Point3D p = new Point3D(p_x, p_y, p_z);
+                    t.catmullRomPoints.push_back(p);
+					/* std::cout << "catmull" << std::endl;
+					std::cout << p_x << std::endl;
+					std::cout << p_y << std::endl;
+					std::cout << p_z << std::endl; */
+                }
+
 				transformacoesLista.push_back(t);
 				grupo->transforms.push_back(t);
+				/* std::cout << "translate" << std::endl;
+				std::cout << x << std::endl;
+				std::cout << y << std::endl;
+				std::cout << z << std::endl;
+				std::cout << time << std::endl; */
 			}
 			if (strcmp(trf->Value(), "rotate") == 0) {
 				float x = 0, y = 0, z = 0, angle = 0;
@@ -295,6 +373,9 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 				if (trf->Attribute("z") != nullptr) z = stof(trf->Attribute("z"));
 				if (trf->Attribute("angle") != nullptr) angle = stof(trf->Attribute("angle"));
 				Transformacao t = *new Transformacao(1, x, y, z, angle);
+
+				if (trf->Attribute("time") != nullptr) {time = stof(trf->Attribute("time")); t.time = time;}
+
 				transformacoesLista.push_back(t);
 				grupo->transforms.push_back(t);
 			}
@@ -460,7 +541,7 @@ int main(int argc, char* argv[]) {
 		readXML(argv[1]);
 	}
 	else {
-		readXML("test_3_2.xml");
+		readXML("test_3_1.xml");
 	}
 
 	// Inicialização do GLUT

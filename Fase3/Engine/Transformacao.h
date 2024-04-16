@@ -2,6 +2,7 @@
 #define TRANSFORMACAO_H
 
 #include <vector>
+#include "Modelo.h"
 
 class Transformacao {
 public:
@@ -10,6 +11,9 @@ public:
     float x;
     float y;
     float z;
+    float time = 0;
+	bool align = true;
+    std::vector<Point3D> catmullRomPoints;
 
 
     Transformacao(); // Default constructor
