@@ -1,0 +1,204 @@
+<world>
+    <window width="512" height="512" />
+    <camera> 
+	    <position x="3" y="2" z="3" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="60" near="1" far="1000" /> <!-- optional, use these values as default-->
+    </camera>
+
+
+<!-- Space ship -->
+    <group>
+        <transform> 
+            <rotate angle="90" x="1" y="0" z="0" />
+        </transform>
+        <group>
+            <!-- First Box -->
+            <transform> 
+                <translate x="0" y="1" z="0" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Second Box -->
+            <transform> 
+                <translate x="0" y="0" z="0" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+        <!-- Braços -->
+
+        <!-- Direita -->
+        <group>
+            <!-- Third Box -->
+            <transform> 
+                <translate x=".55" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Forth Box -->
+            <transform> 
+                <translate x=".70" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+        <group>
+            <!-- Fifth Box -->
+            <transform> 
+                <translate x=".85" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <!-- Esquerda -->
+        <group>
+            <!-- Sixth Box -->
+            <transform> 
+                <translate x="-.55" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Seventh Box -->
+            <transform> 
+                <translate x="-.70" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+        <group>
+            <!-- Eight Box -->
+            <transform> 
+                <translate x="-.85" y=".7" z="0" />
+                <scale x=".15" y=".15" z=".15" />
+            </transform>
+            <models> 
+                <model file="box.3d"> 
+                    <color r="0.7" g="0.7" b="0.7" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Plane direita frente -->
+            <transform> 
+                <translate x="1.8" y=".7" z=".15" />
+                <rotate angle="60" x="1" y="0" z="0" />
+                <scale x="2" y="2" z="2" />
+            </transform>
+            <models> 
+                <model file="plane.3d"> 
+                    <color r="0" g="0" b="255" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Plane direita tras -->
+            <transform> 
+                <translate x="1.8" y=".7" z="-.15" />
+                <rotate angle="240" x="1" y="0" z="0" />
+                <scale x="2" y="2" z="2" />
+            </transform>
+            <models> 
+                <model file="plane.3d"> 
+                    <color r="0" g="0" b="255" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Plane esquerda frente -->
+            <transform> 
+                <translate x="-1.8" y=".7" z=".15" />
+                <rotate angle="60" x="1" y="0" z="0" />
+                <scale x="2" y="2" z="2" />
+            </transform>
+            <models> 
+                <model file="plane.3d"> 
+                    <color r="0" g="0" b="255" />
+                </model>
+            </models>
+        </group>
+
+        <group>
+            <!-- Plane esquerda tras -->
+            <transform> 
+                <translate x="-1.8" y=".7" z="-.15" />
+                <rotate angle="240" x="1" y="0" z="0" />
+                <scale x="2" y="2" z="2" />
+            </transform>
+            <models> 
+                <model file="plane.3d"> 
+                    <color r="0" g="0" b="255" />
+                </model>
+            </models>
+        </group>
+        <!-- Janela de cima -->
+        <group>
+            <transform> 
+                <translate x="0" y="1.51" z="0" />
+                <scale x=".15" y=".15" z=".15"/>
+            </transform>
+                <models>
+                    <model file="window.3d">
+                        <color r="0.5" g="0.5" b="0.5" /> 
+                    </model>
+                </models>
+        </group>
+        <group>
+            <transform> 
+                <translate x="0" y="-.80" z="0" />
+                <rotate angle="45" x="0" y="1" z="0" />
+                <scale x=".7" y=".7" z=".7"/>
+            </transform>
+                <models>
+                    <model file="cone.3d">
+                        <color r="0.5" g="0.5" b="0.5" /> 
+                    </model>
+                </models>
+        </group>
+	</group>
+
+
+
+
+</world>
+
