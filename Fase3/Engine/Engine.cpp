@@ -20,6 +20,7 @@
 #include "Transformacao.h"
 #include "Modelo.h"
 #include "Grupo.h"
+#include "catmull-rom.h"
 #include <list>
 
 
@@ -68,6 +69,31 @@ void changeSize(int w, int h) {
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void alinhamentoCurva(float* deriv) {
+
+	float Z[3];
+	float Yi[3] = { 0,1,0 };
+	float X[3] = { deriv[0],deriv[1],deriv[2] };
+	float m[16];
+	float Y[3];
+
+	cross(X, Yi, Z); // y antigo, Yi
+	cross(Z, X, Y); // y novo, Y
+
+	normalize(X);
+	normalize(Y);
+	normalize(Z);
+
+	buildRotMatrix(X, Y, Z, m);
+
+	glMultMatrixf((float*)m);
+
+	//glutSwapBuffers();
+	// 
+	Y[0] = Yi[0];
+	Y[1] = Yi[1];
+	Y[2] = Yi[2];
+}
 
 void applyTransformations(Transformacao t) {
 	switch (t.type) {
@@ -81,16 +107,6 @@ void applyTransformations(Transformacao t) {
 
 			int NUM_SEG = 100;
 			float te = 0.0f, inc = 1.0f/NUM_SEG;
-
-			/* glColor3f(0.4f,0.4f,0.4f);
-			glBegin(GL_LINES);
-				for (int i=0 ; i<NUM_SEG ; i++){
-					te+=inc;
-					getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
-					glVertex3f(pos[0], pos[1], pos[2]);
-					glVertex3f(pos[0]+deriv[0], pos[1]+deriv[1], pos[2]+deriv[2]);
-				}
-			glEnd(); */
 
 			getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
 			// draw curve using line segments with GL_LINE_LOOP
@@ -114,7 +130,7 @@ void applyTransformations(Transformacao t) {
 			glTranslatef(t.x, t.y, t.z);
 		}
 		break;
-	case(1): // 1 - Rotate
+	case(1):
 		if (t.angle != 0) {
 			glRotatef(t.angle, t.x, t.y, t.z);
 		}
@@ -130,10 +146,7 @@ void applyTransformations(Transformacao t) {
 			}
 		}
 		break;
-	case(2): // 2 - Scale
-		cout << t.x << endl;
-		cout << t.y << endl;
-		cout << t.z << endl;
+	case(2):
 		glScalef(t.x, t.y, t.z);
 		break;
 	default:
@@ -164,44 +177,17 @@ void readPointsFromFile(const std::string& filename) {
 }
 
 
-//void drawTriangles(vector<Point3D> pontos, float r, float g, float b) {
-//	glBegin(GL_TRIANGLES);
-//	for (size_t i = 0; i < pontos.size(); i += 3) {
-//		glColor3f(r, g, b);  // Usar a cor do modelo para o preenchimento e as linhas
-//		glVertex3f(pontos[i].x, pontos[i].y, pontos[i].z);
-//		glVertex3f(pontos[i + 1].x, pontos[i + 1].y, pontos[i + 1].z);
-//		glVertex3f(pontos[i + 2].x, pontos[i + 2].y, pontos[i + 2].z);
-//	}
-//	glEnd();
-//}
 
-GLuint buffers[1];
-void drawTriangles(vector<Point3D> pontos, float r, float g, float b) {
-	float* vertex = new float[pontos.size() * 3];
-	int index = 0;
-	for (Point3D point : pontos) {
-		vertex[index] = point.x;
-		vertex[index + 1] = point.y;
-		vertex[index + 2] = point.z;
-		index += 3;
-	}
-	glGenBuffers(1, buffers);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pontos.size() * 3, vertex, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+void drawTriangles(vector<Point3D> pontos, GLuint buffer, float r, float g, float b) {
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
 	glColor3f(r, g, b);  // Usar a cor do modelo para o preenchimento e as linhas
 	glVertexPointer(3, GL_FLOAT, 0, 0);
 
-	/*if (tipo = GL_FILL) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	else if (tipo = GL_POINT) glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-	else glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);*/
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glDrawArrays(GL_TRIANGLES, 0, pontos.size() * 3);
 }
-
-
 
 
 
@@ -220,7 +206,8 @@ void drawGrupo(Grupo gR) {
 
 
 	for (int i = 0; i < m.size(); i++) {
-		drawTriangles(m[i].pontos, m[i].r, m[i].g, m[i].b);
+		drawTriangles(m[i].pontos, (m[i].buffer + 1), m[i].r, m[i].g, m[i].b);
+		// std::cout << m[i].buffer << std::endl;
 	}
 
 	for (int i = 0; i < filhos.size(); i++) {
@@ -334,12 +321,14 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 		for (XMLElement* trf = group->FirstChildElement("transform")->FirstChildElement(); trf != nullptr; trf = trf->NextSiblingElement()) {
 			if (strcmp(trf->Value(), "translate") == 0) {
 				float x = 0, y = 0, z = 0;
+				float time = 0;
 				if (trf->Attribute("x") != nullptr) x = stof(trf->Attribute("x"));
 				if (trf->Attribute("y") != nullptr) y = stof(trf->Attribute("y"));
 				if (trf->Attribute("z") != nullptr) z = stof(trf->Attribute("z"));
 				Transformacao t = *new Transformacao(0, x, y, z);
 
 				if (trf->Attribute("time") != nullptr){time = stof(trf->Attribute("time")); t.time = time;}
+
 				if (trf->Attribute("align") != nullptr){
 					if (strcmp(trf->Attribute("align"), "false") == 0 || strcmp(trf->Attribute("align"), "False") == 0)
                         t.align = false;
@@ -350,7 +339,7 @@ void readGroup(XMLElement* group, Grupo* grupo) {
                     float p_x = stof(ponto->Attribute("x"));
                     float p_y = stof(ponto->Attribute("y"));
                     float p_z = stof(ponto->Attribute("z"));
-					Point3D p = new Point3D(p_x, p_y, p_z);
+					Point3D p = *new Point3D(p_x, p_y, p_z);
                     t.catmullRomPoints.push_back(p);
 					/* std::cout << "catmull" << std::endl;
 					std::cout << p_x << std::endl;
@@ -367,7 +356,7 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 				std::cout << time << std::endl; */
 			}
 			if (strcmp(trf->Value(), "rotate") == 0) {
-				float x = 0, y = 0, z = 0, angle = 0;
+				float x = 0, y = 0, z = 0, angle = 0, time = 0;
 				if (trf->Attribute("x") != nullptr) x = stof(trf->Attribute("x"));
 				if (trf->Attribute("y") != nullptr) y = stof(trf->Attribute("y"));
 				if (trf->Attribute("z") != nullptr) z = stof(trf->Attribute("z"));
@@ -426,7 +415,7 @@ void readXML(string file) {
 			return;
 		}
 
-		// Lê as informações da janela (width e height)
+		// Lê as inxmações da janela (width e height)
 		XMLElement* pWindow = pWorld->FirstChildElement("window");
 		if (pWindow) {
 			windowWidth = atoi(pWindow->Attribute("width"));
@@ -535,8 +524,55 @@ void processSpecialKeys(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
+GLuint buffers[1];
+GLuint storeBuffer(vector<Point3D> pontos) {
+	float* vertex = new float[pontos.size() * 3];
+	int index = 0;
+	for (Point3D point : pontos) {
+		vertex[index] = point.x;
+		vertex[index + 1] = point.y;
+		vertex[index + 2] = point.z;
+		index += 3;
+	}
+	glGenBuffers(1, buffers);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pontos.size() * 3, vertex, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+
+	return buffers[0];
+}
+
+
+
+
+void pushGrupo(Grupo grupo) {
+	std::vector<Modelo>& modelos = grupo.modelos;
+	std::vector<Grupo>& filhos = grupo.filhos;
+
+	for (int i = 0; i < modelos.size(); i++) {
+		modelos[i].buffer = storeBuffer(modelos[i].pontos);
+		std::cout << "Tamanho do modelo: " << modelos.size() << std::endl;
+	}
+
+	for (int j = 0; j < filhos.size(); j++) {
+		std::cout << "Tamanho dos filhos: " << filhos.size() << std::endl;
+		pushGrupo(filhos[j]);
+	}
+}
+
+
+
+void pushBuffer() {
+	for (size_t i = 0; i < gruposLista.size(); ++i) {
+		pushGrupo(gruposLista[i]);
+	}
+}
+
+
+
 // Função principal
 int main(int argc, char* argv[]) {
+	// Leitura do arquivo XML
 	if (argc == 2) {
 		readXML(argv[1]);
 	}
@@ -553,14 +589,18 @@ int main(int argc, char* argv[]) {
 	glewInit();
 	glEnableClientState(GL_VERTEX_ARRAY);
 
+	pushBuffer();
+
 	// Registro de callbacks
 	glutDisplayFunc(renderScene);
+	glutIdleFunc(renderScene);
 	glutReshapeFunc(changeSize);
 	glutSpecialFunc(processKeys);
 	glutKeyboardFunc(processSpecialKeys);
 
+	// Inicialização do OpenGL
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE); //Responsável por não renderizar as faces trazeiras da figura
+	glEnable(GL_CULL_FACE);
 
 	// Loop principal do GLUT
 	glutMainLoop();

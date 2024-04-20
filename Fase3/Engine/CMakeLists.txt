@@ -8,7 +8,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Adiciona o arquivo tinyxml2.h ao seu projeto
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(${PROJECT_NAME} Engine.cpp tinyxml2.cpp Modelo.cpp Grupo.cpp Transformacao.cpp)
+add_executable(${PROJECT_NAME} Engine.cpp tinyxml2.cpp Modelo.cpp Grupo.cpp Transformacao.cpp catmull-rom.cpp)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})

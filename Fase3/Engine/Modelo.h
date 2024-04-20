@@ -2,6 +2,7 @@
 #define MODELO_H
 
 #include <vector>
+#include <GL/glut.h>
 
 struct Point3D {
     float x, y, z;
@@ -12,6 +13,7 @@ class Modelo {
 public:
     std::vector<Point3D> pontos;
     float r, g, b;
+    GLuint buffer;
 };
 
 #endif /* MODELO_H */
