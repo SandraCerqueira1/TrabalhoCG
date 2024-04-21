@@ -98,7 +98,7 @@ void alinhamentoCurva(float* deriv) {
 void applyTransformations(Transformacao t) {
 	switch (t.type) {
 	case(0): // 0 - Translate
-		if(t.time != 0 && t.catmullRomPoints.size() >= 4){ // se for uma curva de catmull rom
+		if (t.time != 0 && t.catmullRomPoints.size() >= 4) { // se for uma curva de catmull rom
 			float pos[3];
 			float deriv[3];
 
@@ -106,13 +106,13 @@ void applyTransformations(Transformacao t) {
 			// --------------------- Build and Draw curve
 
 			int NUM_SEG = 100;
-			float te = 0.0f, inc = 1.0f/NUM_SEG;
+			float te = 0.0f, inc = 1.0f / NUM_SEG;
 
 			getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
 			// draw curve using line segments with GL_LINE_LOOP
-			glColor3f(1.0f,1.0f,1.0f);
+			glColor3f(1.0f, 1.0f, 1.0f);
 			glBegin(GL_LINE_LOOP);
-			for (int i=0 ; i<NUM_SEG ; i++, te+=inc){
+			for (int i = 0; i < NUM_SEG; i++, te += inc) {
 				getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
 				glVertex3f(pos[0], pos[1], pos[2]);
 			}
@@ -206,7 +206,7 @@ void drawGrupo(Grupo gR) {
 
 
 	for (int i = 0; i < m.size(); i++) {
-		drawTriangles(m[i].pontos, (m[i].buffer + 1), m[i].r, m[i].g, m[i].b);
+		drawTriangles(m[i].pontos, (m[i].buffer ), m[i].r, m[i].g, m[i].b);
 		// std::cout << m[i].buffer << std::endl;
 	}
 
@@ -327,25 +327,25 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 				if (trf->Attribute("z") != nullptr) z = stof(trf->Attribute("z"));
 				Transformacao t = *new Transformacao(0, x, y, z);
 
-				if (trf->Attribute("time") != nullptr){time = stof(trf->Attribute("time")); t.time = time;}
+				if (trf->Attribute("time") != nullptr) { time = stof(trf->Attribute("time")); t.time = time; }
 
-				if (trf->Attribute("align") != nullptr){
+				if (trf->Attribute("align") != nullptr) {
 					if (strcmp(trf->Attribute("align"), "false") == 0 || strcmp(trf->Attribute("align"), "False") == 0)
-                        t.align = false;
+						t.align = false;
 				}
 
 				// pontos das curvas catmull
-                for (XMLElement *ponto = trf->FirstChildElement("point"); ponto != nullptr; ponto = ponto->NextSiblingElement()) {
-                    float p_x = stof(ponto->Attribute("x"));
-                    float p_y = stof(ponto->Attribute("y"));
-                    float p_z = stof(ponto->Attribute("z"));
+				for (XMLElement* ponto = trf->FirstChildElement("point"); ponto != nullptr; ponto = ponto->NextSiblingElement()) {
+					float p_x = stof(ponto->Attribute("x"));
+					float p_y = stof(ponto->Attribute("y"));
+					float p_z = stof(ponto->Attribute("z"));
 					Point3D p = *new Point3D(p_x, p_y, p_z);
-                    t.catmullRomPoints.push_back(p);
+					t.catmullRomPoints.push_back(p);
 					/* std::cout << "catmull" << std::endl;
 					std::cout << p_x << std::endl;
 					std::cout << p_y << std::endl;
 					std::cout << p_z << std::endl; */
-                }
+				}
 
 				transformacoesLista.push_back(t);
 				grupo->transforms.push_back(t);
@@ -363,7 +363,7 @@ void readGroup(XMLElement* group, Grupo* grupo) {
 				if (trf->Attribute("angle") != nullptr) angle = stof(trf->Attribute("angle"));
 				Transformacao t = *new Transformacao(1, x, y, z, angle);
 
-				if (trf->Attribute("time") != nullptr) {time = stof(trf->Attribute("time")); t.time = time;}
+				if (trf->Attribute("time") != nullptr) { time = stof(trf->Attribute("time")); t.time = time; }
 
 				transformacoesLista.push_back(t);
 				grupo->transforms.push_back(t);
@@ -476,7 +476,7 @@ void readXML(string file) {
 
 	for (size_t i = 0; i < gruposLista.size(); ++i) {
 		cout << "Grupo " << i << ":" << endl;
-	
+
 	}
 }
 
@@ -524,46 +524,35 @@ void processSpecialKeys(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
-GLuint buffers[1];
-GLuint storeBuffer(vector<Point3D> pontos) {
-	float* vertex = new float[pontos.size() * 3];
-	int index = 0;
-	for (Point3D point : pontos) {
-		vertex[index] = point.x;
-		vertex[index + 1] = point.y;
-		vertex[index + 2] = point.z;
-		index += 3;
-	}
-	glGenBuffers(1, buffers);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pontos.size() * 3, vertex, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+GLuint storeBuffer(const std::vector<Point3D>& pontos) {
+	GLuint buffer;
+	glGenBuffers(1, &buffer); // Gera um novo buffer
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
-	return buffers[0];
+	// Aloca e envia os dados para a GPU
+	glBufferData(GL_ARRAY_BUFFER, pontos.size() * sizeof(Point3D), &pontos[0], GL_STATIC_DRAW);
+
+	// Desvincula o buffer ao terminar de configurá-lo
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	return buffer; // Retorna o ID do novo buffer criado
 }
 
 
 
-
-void pushGrupo(Grupo grupo) {
-	std::vector<Modelo>& modelos = grupo.modelos;
-	std::vector<Grupo>& filhos = grupo.filhos;
-
-	for (int i = 0; i < modelos.size(); i++) {
-		modelos[i].buffer = storeBuffer(modelos[i].pontos);
-		std::cout << "Tamanho do modelo: " << modelos.size() << std::endl;
+void pushGrupo(Grupo& grupo) {
+	for (Modelo& modelo : grupo.modelos) {
+		modelo.buffer = storeBuffer(modelo.pontos);
 	}
-
-	for (int j = 0; j < filhos.size(); j++) {
-		std::cout << "Tamanho dos filhos: " << filhos.size() << std::endl;
-		pushGrupo(filhos[j]);
+	for (Grupo& filho : grupo.filhos) {
+		pushGrupo(filho);
 	}
 }
-
 
 
 void pushBuffer() {
 	for (size_t i = 0; i < gruposLista.size(); ++i) {
+		std::cout << "Criando buffers para o grupo " << i << std::endl;
 		pushGrupo(gruposLista[i]);
 	}
 }
@@ -577,7 +566,7 @@ int main(int argc, char* argv[]) {
 		readXML(argv[1]);
 	}
 	else {
-		readXML("test_3_1.xml");
+		readXML("sistema_solar_normal_extras.xml");
 	}
 
 	// Inicialização do GLUT
@@ -593,7 +582,7 @@ int main(int argc, char* argv[]) {
 
 	// Registro de callbacks
 	glutDisplayFunc(renderScene);
-	glutIdleFunc(renderScene);
+	//glutIdleFunc(renderScene);
 	glutReshapeFunc(changeSize);
 	glutSpecialFunc(processKeys);
 	glutKeyboardFunc(processSpecialKeys);
