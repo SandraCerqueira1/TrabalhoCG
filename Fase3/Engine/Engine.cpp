@@ -105,7 +105,7 @@ void applyTransformations(Transformacao t) {
 
 			// --------------------- Build and Draw curve
 
-			int NUM_SEG = 100;
+			int NUM_SEG = 20;
 			float te = 0.0f, inc = 1.0f / NUM_SEG;
 
 			getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
@@ -178,16 +178,37 @@ void readPointsFromFile(const std::string& filename) {
 
 
 
+//void drawTriangles(vector<Point3D> pontos, GLuint buffer, float r, float g, float b) {
+//	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+//
+//	glColor3f(r, g, b);  // Usar a cor do modelo para o preenchimento e as linhas
+//	glVertexPointer(3, GL_FLOAT, 0, 0);
+//
+//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//
+//	glDrawArrays(GL_TRIANGLES, 0, pontos.size() * 3);
+//}
+
 void drawTriangles(vector<Point3D> pontos, GLuint buffer, float r, float g, float b) {
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-	glColor3f(r, g, b);  // Usar a cor do modelo para o preenchimento e as linhas
+	glColor3f(r, g, b);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glPolygonMode(GL_FRONT_AND_BACK, tipo);  // Certifique-se de que esta chamada esteja ativa
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	switch (tipo) {
+	case GL_FILL:
+	case GL_LINE:
+	case GL_POINT:
+		glDrawArrays(GL_TRIANGLES, 0, pontos.size() * 3);
+		break;
+	default:
+		std::cerr << "Modo de desenho desconhecido." << endl;
+		break;
+	}
 
-	glDrawArrays(GL_TRIANGLES, 0, pontos.size() * 3);
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Desvincula o buffer para evitar estado indesejado
 }
+
 
 
 
@@ -566,7 +587,7 @@ int main(int argc, char* argv[]) {
 		readXML(argv[1]);
 	}
 	else {
-		readXML("sistema_solar_normal_extras.xml");
+		readXML("moving.xml");
 	}
 
 	// Inicialização do GLUT
@@ -582,7 +603,7 @@ int main(int argc, char* argv[]) {
 
 	// Registro de callbacks
 	glutDisplayFunc(renderScene);
-	//glutIdleFunc(renderScene);
+	glutIdleFunc(renderScene);
 	glutReshapeFunc(changeSize);
 	glutSpecialFunc(processKeys);
 	glutKeyboardFunc(processSpecialKeys);
