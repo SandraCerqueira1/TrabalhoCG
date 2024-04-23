@@ -509,72 +509,130 @@ void generateRingAmbosLados(float ri, float re, int slices, std::ofstream& outFi
 patchFile 3 fase
 */
 
-vector<vector<vector<float>>> readPatchesFile(const char* filePath){
-    FILE* file = fopen(filePath,"r");
-    vector<vector<vector<float>>> result;
-    if(file){
-        char buffer[2048];
-        if(!fgets(buffer,2047,file)) return result;
-        int numPatches = atoi(buffer);
-        vector<vector<int>> indicesPerPatch;
-        for(int i = 0; i < numPatches; i++){
-            if(!fgets(buffer,2047,file)) return result;
-            vector<int> indices;
-            for(char* token = strtok(buffer,","); token; token = strtok(NULL,",")){
-                indices.push_back(atoi(token));
-            }
-            indicesPerPatch.push_back(indices);
-        }
-        if(!fgets(buffer,2047,file)) return result;
-        int numControlPoints = atoi(buffer);
-        vector<vector<float>> controlPoints;
-        for(int i = 0; i < numControlPoints; i++){
-            if(!fgets(buffer,2047,file)) return result;
-            vector<float> point;
-            for(char* token = strtok(buffer,","); token; token = strtok(NULL,",")){
-                point.push_back(atof(token));
-            }
-            controlPoints.push_back(point);
-        }
-        for(vector<int> indices : indicesPerPatch){
-            vector<vector<float>> patch;
-            for(int indice : indices){
-                vector<float> point;
-                point.push_back(controlPoints[indice][0]);
-                point.push_back(controlPoints[indice][1]);
-                point.push_back(controlPoints[indice][2]);
-                patch.push_back(point);
-            }
-            result.push_back(patch);
-        }
-        fclose(file);
+
+struct Point3D {
+    float x, y, z;
+};
+
+std::vector<std::vector<int>> patchIndices;
+std::vector<Point3D> controlPoints;
+
+void readPatchFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening input file!" << std::endl;
+        return;
     }
+
+    int numPatches, numControlPoints;
+    std::string line;
+
+    // Leitura do número de patches
+    file >> numPatches;
+    std::getline(file, line); // Ignorar o resto da linha após ler numPatches
+
+    patchIndices.resize(numPatches);
+    for (int i = 0; i < numPatches; ++i) {
+        std::getline(file, line);
+        std::istringstream iss(line);
+        int index;
+        while (iss >> index) {
+            patchIndices[i].push_back(index);
+            if (iss.peek() == ',') iss.ignore();
+        }
+    }
+
+    // Leitura do número de pontos de controle
+    file >> numControlPoints;
+    std::getline(file, line); // Ignorar o resto da linha após ler numControlPoints
+
+    controlPoints.resize(numControlPoints);
+    for (int i = 0; i < numControlPoints; ++i) {
+        if (!getline(file, line)) {
+            std::cerr << "Failed to read line for control point " << i << std::endl;
+            continue;
+        }
+        std::istringstream iss(line);
+        char comma;
+        if (!(iss >> controlPoints[i].x >> comma >> controlPoints[i].y >> comma >> controlPoints[i].z)) {
+            std::cerr << "Failed to read control point " << i << std::endl;
+        }
+    }
+
+    file.close();
+}
+
+
+Point3D evaluateBezier(const std::vector<Point3D>& patchControlPoints, float u, float v) {
+    // Coeficientes de Bernstein para um polinômio de grau 3
+    float Bu[4] = {
+        (1 - u) * (1 - u) * (1 - u),  // u^0
+        3 * (1 - u) * (1 - u) * u,    // u^1
+        3 * (1 - u) * u * u,          // u^2
+        u * u * u                     // u^3
+    };
+
+    float Bv[4] = {
+        (1 - v) * (1 - v) * (1 - v),  // v^0
+        3 * (1 - v) * (1 - v) * v,    // v^1
+        3 * (1 - v) * v * v,          // v^2
+        v * v * v                     // v^3
+    };
+
+    Point3D result = {0, 0, 0};
+
+    // Calcular o ponto na superfície de Bezier usando a matriz de Bernstein
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            float coeff = Bu[i] * Bv[j]; // Coeficiente do polinômio de Bernstein para (u, v)
+            result.x += coeff * patchControlPoints[i * 4 + j].x;
+            result.y += coeff * patchControlPoints[i * 4 + j].y;
+            result.z += coeff * patchControlPoints[i * 4 + j].z;
+        }
+    }
+
     return result;
 }
 
 
-void generateSurface(const char* filePath, int tessellation, std::ofstream& outFile) {
-    float u = 0.0f, v = 0.0f, delta = 1.0f/tessellation;
-    float A[3], B[3], C[3], D[3];
-    vector<vector<vector<float>>> patches = readPatchesFile(filePath);
-    for(vector<vector<float>> patch : patches){ // um patch tem 16 pontos
-        for(int i = 0; i < tessellation; i++, u += delta){
-            for(int j = 0; j < tessellation; j++, v += delta){
-                // Cálculo dos pontos
-                surfacePoint(u,v,patch,A);
-                surfacePoint(u,v+delta,patch,B);
-                surfacePoint(u+delta,v,patch,C);
-                surfacePoint(u+delta,v+delta,patch,D);
-                // Triangulação
-                writeVertex(outFile, C[0], C[1], C[2], A[0], A[1], A[2], B[0], B[1], B[2]);
-                writeVertex(outFile, B[0], B[1], B[2], D[0], D[1], D[2], C[0], C[1], C[2]);
-            }
-            v = 0.0f;
-        }
-        u = v = 0.0f;
+void generatorFigura(const std::string& filenamePatch, int tesselationLevel, const std::string& outputFile) {
+    readPatchFile(filenamePatch);
+    
+    std::ofstream outFile("../Ficheiros3D/" + outputFile);
+    if (!outFile.is_open()) {
+        std::cerr << "Error opening output file." << std::endl;
+        return;
     }
-}
 
+    for (const auto& patch : patchIndices) {
+        std::vector<Point3D> patchControlPoints;
+        for (int index : patch) {
+            patchControlPoints.push_back(controlPoints[index]);
+        }
+
+        float step = 1.0f / tesselationLevel;
+        for (int i = 0; i < tesselationLevel; ++i) {
+            float u = i * step;
+            float uNext = (i + 1) * step;
+            for (int j = 0; j < tesselationLevel; ++j) {
+                float v = j * step;
+                float vNext = (j + 1) * step;
+
+                // Calculate vertices of a grid cell
+                Point3D p1 = evaluateBezier(patchControlPoints, u, v);
+                Point3D p2 = evaluateBezier(patchControlPoints, uNext, v);
+                Point3D p3 = evaluateBezier(patchControlPoints, u, vNext);
+                Point3D p4 = evaluateBezier(patchControlPoints, uNext, vNext);
+
+                // Write two triangles of this cell
+                writeVertex(outFile, p1.x, p1.y, p1.z, p3.x, p3.y, p3.z, p4.x, p4.y, p4.z);
+                writeVertex(outFile, p1.x, p1.y, p1.z, p4.x, p4.y, p4.z, p2.x, p2.y, p2.z);
+            }
+        }
+    }
+
+    outFile.close();
+}
 
 
 
@@ -663,7 +721,8 @@ int main(int argc, char* argv[]) {
             }
             std::string patchFilename = "../FicheirosPatch/" + std::string(argv[2]);
             int tessellation = std::stoi(argv[3]);
-            generateSurface(patchFilename.c_str(), tessellation, outFile);
+            std::string outputFilename = argv[4];
+            generatorFigura(patchFilename, tessellation, outputFilename);
             std::cout << "Superfície gerada com sucesso e salva em " << filename << std::endl;
         }
         else {
