@@ -44,6 +44,7 @@ int windowHeight;
 bool showAxes = true;         // Mostrar ou não os eixos
 int tipo = GL_LINE;       // GL_LINE,  GL_FILL ou GL_Point
 float red = 0.0f, green = 1.0f, blue = 0.0f;
+bool showCurves = true;  // Inicialmente definido para mostrar as curvas
 
 
 // Vetor para armazenar os pontos lidos dos ficheiros .3d
@@ -105,18 +106,19 @@ void applyTransformations(Transformacao t) {
 
 			// --------------------- Build and Draw curve
 
-			int NUM_SEG = 20;
-			float te = 0.0f, inc = 1.0f / NUM_SEG;
+			if (showCurves) { // Verifica se as curvas devem ser mostradas
+				int NUM_SEG = 100;
+				float te = 0.0f, inc = 1.0f / NUM_SEG;
 
-			getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
-			// draw curve using line segments with GL_LINE_LOOP
-			glColor3f(1.0f, 1.0f, 1.0f);
-			glBegin(GL_LINE_LOOP);
-			for (int i = 0; i < NUM_SEG; i++, te += inc) {
 				getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
-				glVertex3f(pos[0], pos[1], pos[2]);
+				glColor3f(1.0f, 1.0f, 1.0f); // cor branca para as curvas
+				glBegin(GL_LINE_LOOP);
+				for (int i = 0; i < NUM_SEG; i++, te += inc) {
+					getGlobalCatmullRomPoint(te, pos, deriv, t.catmullRomPoints);
+					glVertex3f(pos[0], pos[1], pos[2]);
+				}
+				glEnd();
 			}
-			glEnd();
 
 
 			// --------------------- Make Movement
@@ -540,7 +542,10 @@ void processSpecialKeys(unsigned char key, int x, int y) {
 	case 'p':
 		tipo = GL_POINT;//dá display dos pontos usados para desenhar a figura
 		break;
-	}
+	 case 'c': // Tecla para alternar a visibilidade das curvas de Catmull-Rom
+		showCurves = !showCurves;
+		break;
+}
 	updateCameraPosition();
 	glutPostRedisplay();
 }
@@ -595,7 +600,7 @@ int main(int argc, char* argv[]) {
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(windowWidth, windowHeight);
-	glutCreateWindow("Phase 2");
+	glutCreateWindow("Phase 3");
 	glewInit();
 	glEnableClientState(GL_VERTEX_ARRAY);
 
